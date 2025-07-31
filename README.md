@@ -22,13 +22,13 @@ Structured Memory instead maintains **living documents** with **defined sections
 
 ### Option 1: Install from npm (when published)
 ```bash
-npm install -g structured-memory-mcp
+npm install -g mcp-structured-memory
 ```
 
 ### Option 2: Install from source
 ```bash
-git clone https://github.com/yourusername/structured-memory-mcp.git
-cd structured-memory-mcp
+git clone https://github.com/nmeierpolys/mcp-structured-memory.git
+cd mcp-structured-memory
 npm install
 npm run build
 ```
@@ -43,9 +43,9 @@ Add to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "structured-memory": {
+    "mcp-structured-memory": {
       "command": "node",
-      "args": ["/path/to/structured-memory-mcp/dist/index.js"],
+      "args": ["/path/to/mcp-structured-memory/dist/index.js"],
       "env": {
         "MEMORY_STORAGE_PATH": "~/Documents/StructuredMemory"
       }
@@ -56,18 +56,17 @@ Add to your Claude Desktop config file:
 
 ### Configuration Options
 
-- `MEMORY_STORAGE_PATH`: Where to store memory files (defaults to platform-specific location)
+- `MEMORY_STORAGE_PATH`: Where to store memory document files (defaults to platform-specific location)
 - `ENABLE_FILE_WATCH`: Watch for external file changes (default: true)
 - `BACKUP_ON_UPDATE`: Create backups before updates (default: true)
-- `DEFAULT_TEMPLATE`: Default template for new memories (default: "custom")
 
 ## Storage Locations
 
-Memory files are stored as markdown files in:
+Memory document files are stored as markdown files in:
 
-- **macOS**: `~/Library/Application Support/structured-memory/`
-- **Windows**: `%LOCALAPPDATA%\structured-memory\`
-- **Linux**: `~/.local/share/structured-memory/`
+- **macOS**: `~/Library/Application Support/mcp-structured-memory/`
+- **Windows**: `%LOCALAPPDATA%\mcp-structured-memory\`
+- **Linux**: `~/.local/share/mcp-structured-memory/`
 
 You can override this with the `MEMORY_STORAGE_PATH` environment variable.
 
@@ -80,12 +79,12 @@ Create a new structured memory document.
 
 **Parameters:**
 - `type` (string, required): Template type (job_search, research, real_estate, custom)
-- `name` (string, required): Unique identifier for this memory
+- `name` (string, required): Unique identifier for this memory document
 - `initial_context` (string, optional): Context for AI to customize the template
 
 **Example:**
 ```
-"Create a job search memory with initial context: I'm a senior engineer looking for climate tech roles"
+"Create a job search memory document with initial context: I'm a senior engineer looking for climate tech roles"
 ```
 
 #### `list_memories`
@@ -99,7 +98,7 @@ List all available memory documents.
 Get a high-level summary of a memory document.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to summarize
+- `memory_id` (string, required): The memory document to summarize
 
 **Example:**
 ```
@@ -107,10 +106,10 @@ Get a high-level summary of a memory document.
 ```
 
 #### `get_section`
-Retrieve a specific section from a memory.
+Retrieve a specific section from a memory document.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to read from
+- `memory_id` (string, required): The memory document to read from
 - `section` (string, required): Section name (e.g., "active_pipeline", "search_criteria")
 
 **Example:**
@@ -122,7 +121,7 @@ Retrieve a specific section from a memory.
 Search for information within a memory document.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to search
+- `memory_id` (string, required): The memory document to search
 - `query` (string, required): Search query
 
 **Example:**
@@ -133,10 +132,10 @@ Search for information within a memory document.
 ### Update Operations
 
 #### `update_section`
-Update an entire section of a memory.
+Update an entire section of a memory document.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to update
+- `memory_id` (string, required): The memory document to update
 - `section` (string, required): Section to update
 - `content` (string, required): New content
 - `mode` (string, optional): "replace" or "append" (default: "append")
@@ -145,7 +144,7 @@ Update an entire section of a memory.
 Add an item to a list section.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to update
+- `memory_id` (string, required): The memory document to update
 - `section` (string, required): List section name
 - `item` (object, required): Item data (structure depends on template)
 
@@ -158,7 +157,7 @@ Add an item to a list section.
 Update an existing item in a list.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to update
+- `memory_id` (string, required): The memory document to update
 - `section` (string, required): List section name
 - `item_identifier` (string, required): Item to update (e.g., company name)
 - `updates` (object, required): Fields to update
@@ -172,7 +171,7 @@ Update an existing item in a list.
 Move an item between list sections.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to update
+- `memory_id` (string, required): The memory document to update
 - `from_section` (string, required): Source section
 - `to_section` (string, required): Destination section
 - `item_identifier` (string, required): Item to move
@@ -186,10 +185,10 @@ Move an item between list sections.
 ### Analysis Tools
 
 #### `analyze_memory`
-Get AI-powered insights from a memory.
+Get AI-powered insights from a memory document.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to analyze
+- `memory_id` (string, required): The memory document to analyze
 - `aspect` (string, optional): Specific aspect to analyze
 
 **Example:**
@@ -200,10 +199,10 @@ Get AI-powered insights from a memory.
 ### Export/Import
 
 #### `export_memory`
-Export a memory in various formats.
+Export a memory document in various formats.
 
 **Parameters:**
-- `memory_id` (string, required): The memory to export
+- `memory_id` (string, required): The memory document to export
 - `format` (string, optional): "markdown", "json", "pdf" (default: "markdown")
 
 ## Built-in Templates
@@ -225,9 +224,9 @@ Start with a blank template and define your own sections.
 ### Starting a Job Search
 
 ```
-User: "Create a job search memory. I'm a senior frontend engineer looking for remote climate tech roles."
+User: "Create a job search memory document. I'm a senior frontend engineer looking for remote climate tech roles."
 
-Claude: "I've created a job search memory for you. Based on your background, I've set up sections for tracking opportunities, companies you've ruled out, and market insights. The file is at: ~/Library/Application Support/structured-memory/job-search-2025.md
+Claude: "I've created a job search memory document for you. Based on your background, I've set up sections for tracking opportunities, companies you've ruled out, and market insights. The file is at: ~/Library/Application Support/mcp-structured-memory/job-search-2025.md
 
 You can edit this file directly in any text editor. What criteria should I add for your search?"
 
@@ -253,7 +252,7 @@ Claude: "Updated. Terraformation is now in your pipeline with status 'Not applie
 ```
 User: "Show me a summary of my job search"
 
-Claude: "Here's your job search summary:
+Claude: "Here's your job search memory document summary:
 
 **Active Pipeline**: 7 companies
 - 5-star opportunities: 3 (Anthropic, Overstory, Equilibrium Energy)
@@ -274,7 +273,7 @@ Claude: "Here's your job search summary:
 
 ## Direct File Editing
 
-All memory files are standard markdown with YAML frontmatter. You can edit them in:
+All memory document files are standard markdown with YAML frontmatter. You can edit them in:
 - VS Code
 - Obsidian
 - Bear

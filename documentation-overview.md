@@ -73,9 +73,9 @@ tags: [climate-tech, remote]
 ```
 
 #### 2. Storage Locations
-- macOS: `~/Library/Application Support/structured-memory/`
-- Windows: `%LOCALAPPDATA%\structured-memory\`
-- Linux: `~/.local/share/structured-memory/`
+- macOS: `~/Library/Application Support/mcp-structured-memory/`
+- Windows: `%LOCALAPPDATA%\mcp-structured-memory\`
+- Linux: `~/.local/share/mcp-structured-memory/`
 
 #### 3. Template System
 Templates are suggestions, not rigid structures. Start with job_search:

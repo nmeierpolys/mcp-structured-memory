@@ -27,9 +27,9 @@
 
 ### File Storage
 - **R4.1** Must use platform-specific default locations:
-  - macOS: `~/Library/Application Support/structured-memory/`
-  - Windows: `%LOCALAPPDATA%\structured-memory\`
-  - Linux: `~/.local/share/structured-memory/`
+  - macOS: `~/Library/Application Support/mcp-structured-memory/`
+- Windows: `%LOCALAPPDATA%\mcp-structured-memory\`
+- Linux: `~/.local/share/mcp-structured-memory/`
 - **R4.2** Must support override via `MEMORY_STORAGE_PATH` environment variable
 - **R4.3** Must create storage directory if it doesn't exist
 - **R4.4** Files must be readable/editable in any text editor
