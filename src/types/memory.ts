@@ -48,3 +48,34 @@ export interface ListMemoriesResult {
   memories: MemorySummary[];
   total: number;
 }
+
+export interface GetMemorySummaryParams {
+  memory_id: string;
+}
+
+export interface SearchWithinMemoryParams {
+  memory_id: string;
+  query: string;
+}
+
+export interface UpdateSectionParams {
+  memory_id: string;
+  section: string;
+  content: string;
+  mode?: 'replace' | 'append';
+}
+
+export interface UpdateListItemParams {
+  memory_id: string;
+  section: string;
+  item_identifier: string;
+  updates: Record<string, any>;
+}
+
+export interface MoveListItemParams {
+  memory_id: string;
+  from_section: string;
+  to_section: string;
+  item_identifier: string;
+  reason?: string;
+}

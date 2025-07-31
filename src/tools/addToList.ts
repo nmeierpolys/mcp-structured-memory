@@ -1,5 +1,13 @@
 import { StorageManager } from '../storage/StorageManager.js';
 import { AddToListParams } from '../types/memory.js';
+import { 
+  detectSectionType, 
+  extractFields, 
+  formatStarRating, 
+  formatFieldList, 
+  getCurrentDate,
+  FieldMapping 
+} from './addToListHelpers.js';
 
 export async function addToListTool(
   storageManager: StorageManager,
@@ -24,20 +32,25 @@ export async function addToListTool(
   }
 
   // Format the item based on the section type and item data
+  const sectionType = detectSectionType(params.section);
   let itemText: string;
   
-  // For job search active_pipeline section, format as company entry
-  if (params.section.toLowerCase().includes('pipeline') || params.section.toLowerCase().includes('active')) {
-    itemText = formatPipelineItem(params.item);
-  } else if (params.section.toLowerCase().includes('ruled') || params.section.toLowerCase().includes('rejected')) {
-    itemText = formatRuledOutItem(params.item);
-  } else if (params.section.toLowerCase().includes('contact') || params.section.toLowerCase().includes('network')) {
-    itemText = formatContactItem(params.item);
-  } else if (params.section.toLowerCase().includes('interview')) {
-    itemText = formatInterviewItem(params.item);
-  } else {
-    // Generic formatting - just add the item as text or key-value pairs
-    itemText = formatGenericItem(params.item);
+  switch (sectionType) {
+    case 'pipeline':
+      itemText = formatPipelineItem(params.item);
+      break;
+    case 'ruled_out':
+      itemText = formatRuledOutItem(params.item);
+      break;
+    case 'contact':
+      itemText = formatContactItem(params.item);
+      break;
+    case 'interview':
+      itemText = formatInterviewItem(params.item);
+      break;
+    default:
+      itemText = formatGenericItem(params.item);
+      break;
   }
 
   // Add the item to the section
@@ -56,106 +69,149 @@ The item has been appended to the section. You can view the updated section usin
 }
 
 function formatPipelineItem(item: Record<string, any>): string {
-  const company = item.company || item.name || 'Unknown Company';
-  const role = item.role || item.position || 'Unknown Role';
-  const compensation = item.compensation || item.salary || item.pay || 'Not specified';
-  const status = item.status || 'Not applied';
-  const rating = item.rating || item.stars || '';
-  const notes = item.notes || item.note || '';
+  const fieldMappings: FieldMapping = {
+    company: ['company', 'name'],
+    role: ['role', 'position'],
+    compensation: ['compensation', 'salary', 'pay'],
+    status: ['status'],
+    rating: ['rating', 'stars'],
+    notes: ['notes', 'note'],
+    applied_date: ['applied_date', 'date'],
+    next_steps: ['next_steps']
+  };
   
-  let stars = '';
-  if (rating) {
-    const numStars = parseInt(rating.toString().replace(/[^0-9]/g, ''));
-    if (numStars && numStars >= 1 && numStars <= 5) {
-      stars = ' ' + '⭐'.repeat(numStars);
-    }
+  const defaults = {
+    company: 'Unknown Company',
+    role: 'Unknown Role',
+    compensation: 'Not specified',
+    status: 'Not applied'
+  };
+  
+  const fields = extractFields(item, fieldMappings, defaults);
+  const stars = formatStarRating(fields.rating);
+  
+  let result = `### ${fields.company}${stars}\n`;
+  result += formatFieldList(fields, ['company', 'rating'], ['role', 'compensation', 'status']);
+  
+  // Add optional fields
+  if (fields.applied_date) {
+    result += `- **Applied**: ${fields.applied_date}\n`;
   }
-
-  let result = `### ${company}${stars}\n`;
-  result += `- **Role**: ${role}\n`;
-  result += `- **Compensation**: ${compensation}\n`;
-  result += `- **Status**: ${status}\n`;
   
-  if (item.applied_date || item.date) {
-    result += `- **Applied**: ${item.applied_date || item.date}\n`;
+  if (fields.next_steps) {
+    result += `- **Next Steps**: ${fields.next_steps}\n`;
   }
   
-  if (item.next_steps) {
-    result += `- **Next Steps**: ${item.next_steps}\n`;
-  }
-  
-  if (notes) {
-    result += `- **Notes**: ${notes}\n`;
+  if (fields.notes) {
+    result += `- **Notes**: ${fields.notes}\n`;
   }
 
   return result;
 }
 
 function formatRuledOutItem(item: Record<string, any>): string {
-  const company = item.company || item.name || 'Unknown Company';
-  const reason = item.reason || 'Not specified';
-  const date = item.date || item.ruled_out_date || new Date().toISOString().split('T')[0];
-  const notes = item.notes || item.note || '';
-
-  let result = `### ${company}\n`;
-  result += `- **Reason**: ${reason}\n`;
-  result += `- **Date ruled out**: ${date}\n`;
+  const fieldMappings: FieldMapping = {
+    company: ['company', 'name'],
+    reason: ['reason'],
+    date: ['date', 'ruled_out_date'],
+    notes: ['notes', 'note']
+  };
   
-  if (notes) {
-    result += `- **Notes**: ${notes}\n`;
+  const defaults = {
+    company: 'Unknown Company',
+    reason: 'Not specified',
+    date: getCurrentDate()
+  };
+  
+  const fields = extractFields(item, fieldMappings, defaults);
+  
+  let result = `### ${fields.company}\n`;
+  result += `- **Reason**: ${fields.reason}\n`;
+  result += `- **Date ruled out**: ${fields.date}\n`;
+  
+  if (fields.notes) {
+    result += `- **Notes**: ${fields.notes}\n`;
   }
 
   return result;
 }
 
 function formatContactItem(item: Record<string, any>): string {
-  const name = item.name || item.contact || 'Unknown Contact';
-  const company = item.company || 'Unknown Company';
-  const relationship = item.relationship || item.relation || 'Unknown';
-  const contactDate = item.contact_date || item.date || new Date().toISOString().split('T')[0];
-  const status = item.status || 'Contacted';
-  const notes = item.notes || item.note || '';
-
-  let result = `### ${name}\n`;
-  result += `- **Company**: ${company}\n`;
-  result += `- **Relationship**: ${relationship}\n`;
-  result += `- **Contact Date**: ${contactDate}\n`;
-  result += `- **Status**: ${status}\n`;
+  const fieldMappings: FieldMapping = {
+    name: ['name', 'contact'],
+    company: ['company'],
+    relationship: ['relationship', 'relation'],
+    contact_date: ['contact_date', 'date'],
+    status: ['status'],
+    notes: ['notes', 'note']
+  };
   
-  if (notes) {
-    result += `- **Notes**: ${notes}\n`;
+  const defaults = {
+    name: 'Unknown Contact',
+    company: 'Unknown Company',
+    relationship: 'Unknown',
+    contact_date: getCurrentDate(),
+    status: 'Contacted'
+  };
+  
+  const fields = extractFields(item, fieldMappings, defaults);
+  
+  let result = `### ${fields.name}\n`;
+  result += `- **Company**: ${fields.company}\n`;
+  result += `- **Relationship**: ${fields.relationship}\n`;
+  result += `- **Contact Date**: ${fields.contact_date}\n`;
+  result += `- **Status**: ${fields.status}\n`;
+  
+  if (fields.notes) {
+    result += `- **Notes**: ${fields.notes}\n`;
   }
 
   return result;
 }
 
 function formatInterviewItem(item: Record<string, any>): string {
-  const company = item.company || 'Unknown Company';
-  const round = item.round || item.type || 'Interview';
-  const date = item.date || item.interview_date || new Date().toISOString().split('T')[0];
-  const interviewer = item.interviewer || item.interviewers || 'Not specified';
-  const format = item.format || 'Not specified';
-  const notes = item.notes || item.note || '';
-
-  let result = `### ${company} - ${round}\n`;
-  result += `- **Date**: ${date}\n`;
-  result += `- **Interviewer(s)**: ${interviewer}\n`;
-  result += `- **Format**: ${format}\n`;
+  const fieldMappings: FieldMapping = {
+    company: ['company'],
+    round: ['round', 'type'],
+    date: ['date', 'interview_date'],
+    interviewer: ['interviewer', 'interviewers'],
+    format: ['format'],
+    questions: ['questions'],
+    performance: ['performance'],
+    next_steps: ['next_steps'],
+    notes: ['notes', 'note']
+  };
   
-  if (item.questions) {
-    result += `- **Questions Asked**: ${item.questions}\n`;
+  const defaults = {
+    company: 'Unknown Company',
+    round: 'Interview',
+    date: getCurrentDate(),
+    interviewer: 'Not specified',
+    format: 'Not specified'
+  };
+  
+  const fields = extractFields(item, fieldMappings, defaults);
+  
+  let result = `### ${fields.company} - ${fields.round}\n`;
+  result += `- **Date**: ${fields.date}\n`;
+  result += `- **Interviewer(s)**: ${fields.interviewer}\n`;
+  result += `- **Format**: ${fields.format}\n`;
+  
+  // Add optional fields
+  if (fields.questions) {
+    result += `- **Questions Asked**: ${fields.questions}\n`;
   }
   
-  if (item.performance) {
-    result += `- **My Performance**: ${item.performance}\n`;
+  if (fields.performance) {
+    result += `- **My Performance**: ${fields.performance}\n`;
   }
   
-  if (item.next_steps) {
-    result += `- **Next Steps**: ${item.next_steps}\n`;
+  if (fields.next_steps) {
+    result += `- **Next Steps**: ${fields.next_steps}\n`;
   }
   
-  if (notes) {
-    result += `- **Notes**: ${notes}\n`;
+  if (fields.notes) {
+    result += `- **Notes**: ${fields.notes}\n`;
   }
 
   return result;
@@ -169,27 +225,28 @@ function formatGenericItem(item: Record<string, any>): string {
   if (typeof item === 'object' && item !== null) {
     // If it has a name or title, use that as a heading
     if (item.name || item.title) {
-      let result = `### ${item.name || item.title}\n`;
+      const title = item.name || item.title;
+      let result = `### ${title}\n`;
       
-      // Add other properties as bullet points
+      // Convert remaining fields to field list format
+      const remainingFields: Record<string, string> = {};
       for (const [key, value] of Object.entries(item)) {
         if (key !== 'name' && key !== 'title' && value) {
-          const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-          result += `- **${formattedKey}**: ${value}\n`;
+          remainingFields[key] = String(value);
         }
       }
       
+      result += formatFieldList(remainingFields);
       return result;
     } else {
       // Simple key-value format
-      let result = '';
+      const fields: Record<string, string> = {};
       for (const [key, value] of Object.entries(item)) {
         if (value) {
-          const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-          result += `- **${formattedKey}**: ${value}\n`;
+          fields[key] = String(value);
         }
       }
-      return result;
+      return formatFieldList(fields);
     }
   }
   

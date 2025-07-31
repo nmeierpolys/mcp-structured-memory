@@ -11,6 +11,11 @@ import { createMemoryTool } from "./tools/createMemory.js";
 import { addToListTool } from "./tools/addToList.js";
 import { getSectionTool } from "./tools/getSection.js";
 import { listMemoriesTool } from "./tools/listMemories.js";
+import { getMemorySummaryTool } from "./tools/getMemorySummary.js";
+import { searchWithinMemoryTool } from "./tools/searchWithinMemory.js";
+import { updateSectionTool } from "./tools/updateSection.js";
+import { updateListItemTool } from "./tools/updateListItem.js";
+import { moveListItemTool } from "./tools/moveListItem.js";
 
 const server = new Server(
   {
@@ -99,6 +104,121 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           additionalProperties: false,
         },
       },
+      {
+        name: "get_memory_summary",
+        description: "Get a high-level summary of a memory document",
+        inputSchema: {
+          type: "object",
+          properties: {
+            memory_id: {
+              type: "string",
+              description: "The ID of the memory document to summarize",
+            },
+          },
+          required: ["memory_id"],
+        },
+      },
+      {
+        name: "search_within_memory",
+        description: "Search for information within a memory document",
+        inputSchema: {
+          type: "object",
+          properties: {
+            memory_id: {
+              type: "string",
+              description: "The ID of the memory document to search",
+            },
+            query: {
+              type: "string",
+              description: "The search query (words or phrases)",
+            },
+          },
+          required: ["memory_id", "query"],
+        },
+      },
+      {
+        name: "update_section",
+        description: "Update an entire section of a memory document",
+        inputSchema: {
+          type: "object",
+          properties: {
+            memory_id: {
+              type: "string",
+              description: "The ID of the memory document to update",
+            },
+            section: {
+              type: "string",
+              description: "The section name to update",
+            },
+            content: {
+              type: "string",
+              description: "The new content for the section",
+            },
+            mode: {
+              type: "string",
+              enum: ["append", "replace"],
+              description: "Whether to append to or replace the section content (default: append)",
+            },
+          },
+          required: ["memory_id", "section", "content"],
+        },
+      },
+      {
+        name: "update_list_item",
+        description: "Update an existing item in a list section",
+        inputSchema: {
+          type: "object",
+          properties: {
+            memory_id: {
+              type: "string",
+              description: "The ID of the memory document to update",
+            },
+            section: {
+              type: "string",
+              description: "The section containing the item to update",
+            },
+            item_identifier: {
+              type: "string",
+              description: "Identifier for the item to update (e.g., company name, contact name)",
+            },
+            updates: {
+              type: "object",
+              description: "Fields to update with their new values",
+            },
+          },
+          required: ["memory_id", "section", "item_identifier", "updates"],
+        },
+      },
+      {
+        name: "move_list_item",
+        description: "Move an item from one section to another",
+        inputSchema: {
+          type: "object",
+          properties: {
+            memory_id: {
+              type: "string",
+              description: "The ID of the memory document to update",
+            },
+            from_section: {
+              type: "string",
+              description: "The source section containing the item",
+            },
+            to_section: {
+              type: "string",
+              description: "The destination section for the item",
+            },
+            item_identifier: {
+              type: "string",
+              description: "Identifier for the item to move (e.g., company name)",
+            },
+            reason: {
+              type: "string",
+              description: "Optional reason for the move (stored as metadata)",
+            },
+          },
+          required: ["memory_id", "from_section", "to_section", "item_identifier"],
+        },
+      },
     ],
   };
 });
@@ -120,6 +240,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case "list_memories":
         return await listMemoriesTool(storageManager, args);
+
+      case "get_memory_summary":
+        return await getMemorySummaryTool(storageManager, args);
+
+      case "search_within_memory":
+        return await searchWithinMemoryTool(storageManager, args);
+
+      case "update_section":
+        return await updateSectionTool(storageManager, args);
+
+      case "update_list_item":
+        return await updateListItemTool(storageManager, args);
+
+      case "move_list_item":
+        return await moveListItemTool(storageManager, args);
 
       default:
         throw new Error(`Unknown tool: ${name}`);

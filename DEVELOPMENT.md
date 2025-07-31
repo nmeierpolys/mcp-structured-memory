@@ -30,6 +30,18 @@ npm start
 # Build and run in one command
 npm run dev
 
+# Run tests
+npm test
+
+# Run tests in watch mode (for development)
+npm run test:watch
+
+# Run tests with UI (opens browser)
+npm run test:ui
+
+# Run tests with coverage report
+npm run test:coverage
+
 # Lint the code
 npm run lint
 
@@ -52,6 +64,7 @@ src/
     ├── createMemory.ts   # Create new memories
     ├── addToList.ts      # Add items to memory sections
     ├── getSection.ts     # Read memory sections
+    ├── getMemorySummary.ts # Generate memory summaries
     └── listMemories.ts   # List all memories
 ```
 
@@ -85,12 +98,16 @@ src/
 
 **Ready for testing**: The MVP is complete and ready for manual testing with Claude Desktop.
 
-### Next Steps (Phase 2)
+### Phase 2: Enhanced CRUD Operations ✅
 
-- Enhanced read operations (get_memory_summary, search_within_memory)
-- Update operations (update_list_item, move_list_item, update_section) 
-- File watching for external edits
-- Backup system improvements
+**Completed**:
+- [x] Enhanced read operations (get_memory_summary, search_within_memory)
+- [x] Update operations (update_list_item, move_list_item, update_section)
+
+### Next Steps (Phase 3)
+
+- File watching for external edits (lower priority)
+- Enhanced backup system (lower priority)
 
 ### Memory Storage
 
