@@ -308,9 +308,9 @@ This is line 3
         }]
       })
 
-      expect(result.content[0].text).toContain('Memory ID: test-memory')
-      expect(result.content[0].text).toContain('The memory document is ready for you to organize')
-      expect(result.content[0].text).not.toContain('Initial context has been added')
+      expect(result.content[0].text).toContain('PROJECT SETUP REQUIRED')
+      expect(result.content[0].text).toContain('Add these instructions to your project context')
+      expect(result.content[0].text).toContain('using get_full_memory')
     })
 
     it('should return success response with content', async () => {
@@ -320,18 +320,18 @@ This is line 3
       })
 
       expect(result.content[0].text).toContain('Successfully created memory document: "Project Notes"')
-      expect(result.content[0].text).toContain('Memory ID: project-notes')
-      expect(result.content[0].text).toContain('The memory document has been created with your content and is ready for use.')
+      expect(result.content[0].text).toContain('PROJECT SETUP REQUIRED')
+      expect(result.content[0].text).toContain('Add these instructions to your project context')
     })
 
-    it('should include usage instructions', async () => {
+    it('should include project setup instructions', async () => {
       const result = await createMemoryTool(storageManager, { name: 'Test' })
 
-      expect(result.content[0].text).toContain('You can:')
-      expect(result.content[0].text).toContain('Add items to any section using natural language')
-      expect(result.content[0].text).toContain('Create new sections by adding content to them')
-      expect(result.content[0].text).toContain('Edit the file directly in any text editor')
-      expect(result.content[0].text).toContain('The memory will automatically grow and improve as conversations continue')
+      expect(result.content[0].text).toContain('PROJECT SETUP REQUIRED')
+      expect(result.content[0].text).toContain('Add these instructions to your project context')
+      expect(result.content[0].text).toContain('At the start of each conversation, check the project memory "Test" using get_full_memory')
+      expect(result.content[0].text).toContain('Automatically update the memory as you learn new information')
+      expect(result.content[0].text).toContain('The memory will be unused until you add these instructions')
     })
   })
 
