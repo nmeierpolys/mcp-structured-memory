@@ -14,6 +14,15 @@ vi.mock('../storage/StorageManager.js', () => {
   }
 })
 
+// Mock the getCurrentDate function to return consistent date
+vi.mock('./addToListHelpers.js', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    getCurrentDate: vi.fn(() => '2025-07-31')
+  }
+})
+
 describe('addToList Tool', () => {
   let storageManager: StorageManager
   let mockMemory: Memory
