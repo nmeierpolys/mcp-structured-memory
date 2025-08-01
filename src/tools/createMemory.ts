@@ -56,12 +56,11 @@ export async function createMemoryTool(
   await storageManager.writeMemory(memory);
 
   const storagePath =
-    process.env.MEMORY_STORAGE_PATH ||
-    (process.platform === "darwin"
+    process.platform === "darwin"
       ? "~/Library/Application Support/mcp-structured-memory"
       : process.platform === "win32"
       ? "%LOCALAPPDATA%\\mcp-structured-memory"
-      : "~/.local/share/mcp-structured-memory");
+      : "~/.local/share/mcp-structured-memory";
 
   return {
     content: [

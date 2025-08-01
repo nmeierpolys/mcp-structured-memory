@@ -1,22 +1,21 @@
 # Structured Memory MCP Server
 
-A Model Context Protocol (MCP) server that provides structured, domain-specific memory management through markdown files. Unlike general-purpose semantic memory systems, this tool maintains organized, living documents for focused domains like job searches, research projects, real estate hunting, and more.
+A Model Context Protocol (MCP) server that provides structured, domain-specific memory management through markdown files. This is particularly useful for ongoing projects around a particular area of focus where you want to accumulate valuable context over time. Examples include focused domains like travel planning, research projects, real estate search, investment theses, product planning, and career development.
 
 ## Why Structured Memory?
 
-Traditional MCP memory servers use semantic search across scattered conversation snippets. This works well for general recall but fails for focused projects that need organized, categorical information. 
+Traditional MCP memory servers use semantic search across scattered conversation snippets. This works well for general recall but fails for focused projects that need organized, categorical information.
 
-Structured Memory instead maintains **living documents** with **defined sections** that you can scan, update, and track over time - just like you would with a personal notebook, but with AI assistance.
+Structured Memory instead maintains **living documents** with structured content that you can scan, update, and track over time - just like you would with a personal notebook, but with AI assistance.
 
-## Key Features
+Memory documents are stored as markdown on the file system allowing manual curation, but this is primarily intended as something LLMs update over time to improve their ability to support your goals.
 
-- 📁 **Markdown-based storage** - Edit your memories in any text editor
-- 🏗️ **Domain templates** - Pre-built structures for common use cases
-- 🤖 **AI-powered updates** - Natural language commands to maintain your documents
-- 📊 **Structured sections** - Information stays organized, not scattered
-- 🔍 **Smart querying** - Find information within and across your memories
-- 💾 **Local-first** - Your data stays on your machine
-- 🎯 **Purpose-built** - Optimized for focused, ongoing projects
+## Typical usage
+1. Ask your LLM client to create a memory  document
+  `Create a new travel advisor memory document`
+2. Create a new Project for chat conversations in that area. Add the provided usage instructions
+3. New chat conversations start by checking the available info from the project's memory. Your LLM will update this memory over time to build up valuable context.
+4. Optionally prompt your LLM to add/adjust the memory file on demand
 
 ## Installation
 
@@ -35,30 +34,19 @@ npm run build
 
 ## Configuration
 
-Add to your Claude Desktop config file:
-
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+### For Claude Desktop
+Edit the `claude_desktop_config.json` file with the following entry:
 
 ```json
 {
   "mcpServers": {
     "mcp-structured-memory": {
       "command": "node",
-      "args": ["/path/to/mcp-structured-memory/dist/index.js"],
-      "env": {
-        "MEMORY_STORAGE_PATH": "~/Documents/StructuredMemory"
-      }
+      "args": ["/path/to/mcp-structured-memory/dist/index.js"]
     }
   }
 }
 ```
-
-### Configuration Options
-
-- `MEMORY_STORAGE_PATH`: Where to store memory document files (defaults to platform-specific location)
-- `ENABLE_FILE_WATCH`: Watch for external file changes (default: true)
-- `BACKUP_ON_UPDATE`: Create backups before updates (default: true)
 
 ## Storage Locations
 
@@ -68,8 +56,6 @@ Memory document files are stored as markdown files in:
 - **Windows**: `%LOCALAPPDATA%\mcp-structured-memory\`
 - **Linux**: `~/.local/share/mcp-structured-memory/`
 
-You can override this with the `MEMORY_STORAGE_PATH` environment variable.
-
 ## Available Tools
 
 ### Memory Management
@@ -78,13 +64,12 @@ You can override this with the `MEMORY_STORAGE_PATH` environment variable.
 Create a new structured memory document.
 
 **Parameters:**
-- `type` (string, required): Template type (job_search, research, real_estate, custom)
 - `name` (string, required): Unique identifier for this memory document
-- `initial_context` (string, optional): Context for AI to customize the template
+- `initial_context` (string, optional): Context for AI to customize the memory structure
 
 **Example:**
 ```
-"Create a job search memory document with initial context: I'm a senior engineer looking for climate tech roles"
+"Create a travel advisor memory document with initial context: I'm planning a week-long trip to Minnesota in fall"
 ```
 
 #### `list_memories`
@@ -102,7 +87,7 @@ Get a high-level summary of a memory document.
 
 **Example:**
 ```
-"Give me a summary of my job search"
+"Give me a summary of my Minnesota travel plans"
 ```
 
 #### `get_section`
@@ -114,7 +99,7 @@ Retrieve a specific section from a memory document.
 
 **Example:**
 ```
-"Show me the active pipeline from my job search"
+"Show me the must-visit destinations from my Minnesota trip"
 ```
 
 #### `search_within_memory`
@@ -126,7 +111,7 @@ Search for information within a memory document.
 
 **Example:**
 ```
-"Search my job search for companies offering over 300k"
+"Search my travel plans for fall foliage viewing spots"
 ```
 
 ### Update Operations
@@ -146,11 +131,11 @@ Add an item to a list section.
 **Parameters:**
 - `memory_id` (string, required): The memory document to update
 - `section` (string, required): List section name
-- `item` (object, required): Item data (structure depends on template)
+- `item` (object, required): Item data to add
 
 **Example:**
 ```
-"Add Anthropic to my job search pipeline: 5 stars, Senior Engineer, $320-485k, applied today"
+"Add Boundary Waters to my Minnesota itinerary: 5 stars, 3-day canoe trip, includes camping"
 ```
 
 #### `update_list_item`
@@ -164,7 +149,7 @@ Update an existing item in a list.
 
 **Example:**
 ```
-"Update Anthropic in my pipeline: change status to 'Interview scheduled'"
+"Update Split Rock Lighthouse in my itinerary: change status to 'Reservation confirmed'"
 ```
 
 #### `move_list_item`
@@ -179,7 +164,7 @@ Move an item between list sections.
 
 **Example:**
 ```
-"Move Watershed from active pipeline to ruled out: they require in-person work"
+"Move Voyageurs National Park from must-visit to ruled out: too far for this trip"
 ```
 
 ### Analysis Tools
@@ -193,7 +178,7 @@ Get AI-powered insights from a memory document.
 
 **Example:**
 ```
-"Analyze my job search and tell me if I should adjust my strategy"
+"Analyze my travel plans and suggest if I should adjust my itinerary"
 ```
 
 ### Export/Import
@@ -205,70 +190,65 @@ Export a memory document in various formats.
 - `memory_id` (string, required): The memory document to export
 - `format` (string, optional): "markdown", "json", "pdf" (default: "markdown")
 
-## Built-in Templates
+## Flexible Structure
 
-### Job Search
-Sections: search_criteria, active_pipeline, companies_ruled_out, market_insights, networking_contacts, interview_notes
+Memory documents support any structure you need. The AI will help you organize sections based on your use case. Common examples:
 
-### Research Project
-Sections: research_questions, literature_review, methodology, findings, data_sources, next_steps
-
-### Real Estate Search  
-Sections: search_criteria, active_listings, visited_properties, rejected_properties, market_insights, agent_contacts
-
-### Custom
-Start with a blank template and define your own sections.
+- **Travel Planning**: destinations, itinerary, accommodations, activities, restaurants, travel tips, budget tracker
+- **Research Project**: research questions, literature review, methodology, findings, data sources, next steps
+- **Real Estate Search**: search criteria, active listings, visited properties, rejected properties, market insights, agent contacts
+- **Custom**: Any structure that fits your needs
 
 ## Example Usage
 
-### Starting a Job Search
+### Starting a Travel Plan
 
 ```
-User: "Create a job search memory document. I'm a senior frontend engineer looking for remote climate tech roles."
+User: "Create a travel advisor memory document. I'm planning a week-long trip to Minnesota in fall for the autumn colors."
 
-Claude: "I've created a job search memory document for you. Based on your background, I've set up sections for tracking opportunities, companies you've ruled out, and market insights. The file is at: ~/Library/Application Support/mcp-structured-memory/job-search-2025.md
+Claude: "I've created a travel advisor memory document for you. Based on your trip goals, I've set up sections for destinations, itinerary planning, accommodations, and outdoor activities. The file is at: ~/Library/Application Support/mcp-structured-memory/minnesota-trip-2025.md
 
-You can edit this file directly in any text editor. What criteria should I add for your search?"
+You can edit this file directly in any text editor. What are your main priorities for this trip?"
 
-User: "I'm looking for $200k+, must be remote, and I strongly prefer companies working on renewable energy or carbon reduction."
+User: "I want to see fall colors, go hiking, try local cuisine, and visit both the North Shore and the Twin Cities."
 
-Claude: "I've updated your search criteria. Would you like me to add any companies to your active pipeline?"
+Claude: "I've updated your trip priorities. Would you like me to add some must-visit destinations to your itinerary?"
 ```
 
-### Tracking Progress
+### Adding Destinations
 
 ```
-User: "Add Terraformation to my pipeline - they're doing reforestation tech, Senior Engineer role, saw it on Climatebase today"
+User: "Add Split Rock Lighthouse to my itinerary - iconic Lake Superior lighthouse, stunning views, great for photos"
 
-Claude: "I've added Terraformation to your active pipeline. I've given it a 4-star rating based on the climate impact focus. What's the salary range and application status?"
+Claude: "I've added Split Rock Lighthouse to your North Shore destinations. I've given it a 5-star rating as it's one of Minnesota's most photographed landmarks. What's the best time to visit and how long should I plan?"
 
-User: "Unknown salary, haven't applied yet"
+User: "Morning for best light, allow 2 hours including the visitor center"
 
-Claude: "Updated. Terraformation is now in your pipeline with status 'Not applied yet'. You now have 1 company in your active pipeline."
+Claude: "Updated. Split Rock Lighthouse is now in your itinerary with timing notes. You now have 1 destination planned for the North Shore."
 ```
 
 ### Getting Insights
 
 ```
-User: "Show me a summary of my job search"
+User: "Show me a summary of my Minnesota travel plans"
 
-Claude: "Here's your job search memory document summary:
+Claude: "Here's your Minnesota travel memory document summary:
 
-**Active Pipeline**: 7 companies
-- 5-star opportunities: 3 (Anthropic, Overstory, Equilibrium Energy)
-- 4-star opportunities: 4
+**Planned Destinations**: 12 locations
+- Must-see (5-star): 5 (Split Rock Lighthouse, Boundary Waters, Minnehaha Falls, North Shore Scenic Drive, Mall of America)
+- Highly recommended (4-star): 7
 
-**Application Status**:
-- Applied: 2
-- Preparing application: 3
-- Researching: 2
+**Trip Status**:
+- Accommodations booked: 3 locations
+- Activities reserved: 4
+- Restaurant reservations: 3
 
-**Ruled Out**: 12 companies
-- Most common reason: Location requirements (8)
-- Compensation mismatch: 3
-- Role mismatch: 1
+**Budget Tracking**: $1,800 allocated
+- Accommodations: 35% ($630)
+- Transportation: 25% ($450)
+- Food & activities: 40% ($720)
 
-**Key Insight**: You're targeting the right companies, but 67% of rejections are due to location requirements. Consider being more flexible on occasional office visits for exceptional opportunities."
+**Key Insight**: Your itinerary is heavily focused on the North Shore (70% of time). Consider allocating a day or two to explore the Twin Cities for cultural attractions and dining."
 ```
 
 ## Direct File Editing
@@ -285,21 +265,21 @@ The MCP server watches for external changes and reloads files automatically.
 
 ```markdown
 ---
-id: job-search-2025
-type: job_search
+id: minnesota-trip-2025
 created: 2025-01-31
 updated: 2025-01-31T10:30:00Z
-tags: [climate-tech, remote]
+tags: [travel, minnesota, fall-colors]
 status: active
 ---
 
-# Job Search 2025
+# Minnesota Trip Fall 2025
 
-## Search Criteria
+## Trip Overview
 
-- **Level**: Senior/Staff IC
-- **Compensation**: $200K+
-- **Location**: Remote (US)
+- **Duration**: 7 days (September 25 - October 1)
+- **Budget**: $1,800
+- **Main Areas**: North Shore, Twin Cities, Boundary Waters
+- **Focus**: Fall foliage, hiking, local culture
 <!-- sections continue -->
 ```
 

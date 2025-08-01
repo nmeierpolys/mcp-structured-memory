@@ -54,12 +54,11 @@ export async function createMemoryFromContentTool(
   await storageManager.writeMemory(memory);
 
   const storagePath =
-    process.env.MEMORY_STORAGE_PATH ||
-    (process.platform === "darwin"
+    process.platform === "darwin"
       ? "~/Library/Application Support/mcp-structured-memory"
       : process.platform === "win32"
       ? "%LOCALAPPDATA%\\mcp-structured-memory"
-      : "~/.local/share/mcp-structured-memory");
+      : "~/.local/share/mcp-structured-memory";
 
   // Count sections and words for summary
   const sections = Math.max(0, content.split(/^#+\s/m).length - 1);

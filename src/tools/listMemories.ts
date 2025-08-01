@@ -15,9 +15,9 @@ export async function listMemoriesTool(
 To create your first memory document, use the create_memory tool with any name and optional context:
 
 Examples:
-- "Create a memory document called 'job search 2025'"
-- "Create a memory document for 'my research project' with context about climate change"
-- "Create a memory document called 'house hunting' with context about looking in Seattle"`
+- "Create a memory document called 'minnesota trip 2025'"
+- "Create a memory document for 'my travel plans' with context about exploring the North Shore and Twin Cities"
+- "Create a memory document called 'midwest adventure' with context about visiting state parks and local attractions"`
       }]
     };
   }

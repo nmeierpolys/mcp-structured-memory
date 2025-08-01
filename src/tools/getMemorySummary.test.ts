@@ -15,8 +15,8 @@ describe('getMemorySummaryTool Integration Tests', () => {
     // Create a temporary directory for test files
     testDir = await fs.mkdtemp(path.join(os.tmpdir(), 'memory-test-'));
     
-    // Mock the storage path to use our test directory
-    process.env.MEMORY_STORAGE_PATH = testDir;
+    // For this integration test, we need to work with actual files
+    // Since we can't override the storage path, we'll need to mock the StorageManager
     storageManager = new StorageManager();
   });
 
@@ -27,7 +27,6 @@ describe('getMemorySummaryTool Integration Tests', () => {
     } catch (_error) {
       // Ignore cleanup errors
     }
-    delete process.env.MEMORY_STORAGE_PATH;
   });
 
   it('should handle missing memory_id parameter', async () => {
@@ -44,56 +43,56 @@ describe('getMemorySummaryTool Integration Tests', () => {
     // Create a test memory document
     const testMemory: Memory = {
       metadata: {
-        id: 'test-job-search',
+        id: 'test-minnesota-trip',
         created: '2024-01-15T10:00:00Z',
         updated: '2024-01-20T15:30:00Z',
-        tags: ['climate-tech', 'remote'],
+        tags: ['travel', 'minnesota', 'fall-colors'],
         status: 'active'
       },
-      content: `# Job Search 2024
+      content: `# Minnesota Trip 2024
 
-## Search Criteria
+## Trip Overview
 
-- **Level**: Senior/Staff IC
-- **Compensation**: $200K+
-- **Location**: Remote (US)
-- **Industry Focus**: Climate tech and renewable energy
+- **Duration**: 7 days
+- **Budget**: $1,800
+- **Areas**: North Shore, Twin Cities, Boundary Waters
+- **Focus**: Fall foliage, hiking, local culture
 
-## Active Pipeline
+## Must-Visit Destinations
 
-### Anthropic ⭐⭐⭐⭐⭐
-- **Role**: Senior Software Engineer
-- **Compensation**: $300-400K
-- **Status**: Applied 2024-01-18
-- **Notes**: Great mission, strong team
+### Split Rock Lighthouse ⭐⭐⭐⭐⭐
+- **Location**: Two Harbors
+- **Best Time**: Morning for photos
+- **Duration**: 2 hours
+- **Notes**: Iconic Lake Superior landmark
 
-### ClimateWorks ⭐⭐⭐⭐
-- **Role**: Staff Engineer
-- **Compensation**: $250K
-- **Status**: Researching
+### Boundary Waters ⭐⭐⭐⭐
+- **Location**: Northern Minnesota
+- **Best Time**: September for fall colors
+- **Duration**: 3 days
 
-## Companies Ruled Out
+## Ruled Out Destinations
 
-### BigTech Corp
-- **Reason**: Not climate focused
+### Okinawa
+- **Reason**: Too far for this trip
 - **Date ruled out**: 2024-01-16
 
 ## Empty Section
 
-## Market Insights
+## Travel Tips
 
-The climate tech space is growing rapidly. Remote positions are becoming more common.
-Most companies are offering competitive packages to attract top talent.
+Cherry blossom season varies by location. Book accommodations early.
+JR Pass provides great value for intercity travel.
 This section has more content to test word counting.
 `,
-      filePath: path.join(testDir, 'test-job-search.md')
+      filePath: path.join(testDir, 'test-minnesota-trip.md')
     };
 
     // Write the memory to disk
     await storageManager.writeMemory(testMemory);
 
     // Test the summary tool
-    const result = await getMemorySummaryTool(storageManager, { memory_id: 'test-job-search' });
+    const result = await getMemorySummaryTool(storageManager, { memory_id: 'test-minnesota-trip' });
 
     expect(result.content).toHaveLength(1);
     expect(result.content[0].type).toBe('text');
@@ -101,14 +100,14 @@ This section has more content to test word counting.
     const summaryText = result.content[0].text;
     
     // Verify basic structure
-    expect(summaryText).toContain('# Memory Document Summary: test-job-search');
+    expect(summaryText).toContain('# Memory Document Summary: test-minnesota-trip');
     expect(summaryText).toContain('## Overview');
     expect(summaryText).toContain('## Content Metrics');
     expect(summaryText).toContain('## Section Breakdown');
     
     // Verify metadata
     expect(summaryText).toContain('**Status**: active');
-    expect(summaryText).toContain('**Tags**: climate-tech, remote');
+    expect(summaryText).toContain('**Tags**: travel, minnesota, fall-colors');
     
     // Verify metrics - parser sees more sections including individual headings
     expect(summaryText).toContain('**Total Sections**: 9');

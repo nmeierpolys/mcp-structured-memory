@@ -20,7 +20,7 @@ This collection of markdown documents defines a complete MCP (Model Context Prot
 - Technical decisions and architecture principles
 - Success criteria for each phase
 
-**Use for implementation**: Follow Phase 1 to build the narrow slice first - just enough to create a job search memory, add companies, and read them back.
+**Use for implementation**: Follow Phase 1 to build the narrow slice first - just enough to create a travel memory, add destinations, and read them back.
 
 ### 🎯 requirements.md
 **Purpose**: Detailed technical specifications
@@ -46,7 +46,7 @@ This collection of markdown documents defines a complete MCP (Model Context Prot
 1. Create basic MCP server structure
 2. Implement storage manager for markdown files
 3. Build these tools first:
-   - `create_memory` - with job_search template only
+   - `create_memory` - with travel template only
    - `add_to_list` - for adding to any section
    - `get_section` - for reading sections
    - `list_memories` - to see what exists
@@ -56,16 +56,16 @@ This collection of markdown documents defines a complete MCP (Model Context Prot
 #### 1. Memory Structure
 ```yaml
 ---
-id: job-search-2025
-type: job_search
+id: minnesota-trip-2025
+type: travel
 created: 2025-01-31
 updated: 2025-01-31T10:30:00Z
 tags: [climate-tech, remote]
 ---
 
-# Job Search 2025
+# Minnesota Trip 2025
 
-## Search Criteria
+## Trip Overview
 [flexible markdown content]
 
 ## Active Pipeline
@@ -78,9 +78,9 @@ tags: [climate-tech, remote]
 - Linux: `~/.local/share/mcp-structured-memory/`
 
 #### 3. Template System
-Templates are suggestions, not rigid structures. Start with job_search:
-- search_criteria
-- active_pipeline
+Templates are suggestions, not rigid structures. Start with travel:
+- destinations
+- itinerary
 - companies_ruled_out
 - market_insights
 - networking_contacts
@@ -103,10 +103,10 @@ Templates are suggestions, not rigid structures. Start with job_search:
 ### Testing Your Implementation:
 
 Your MVP succeeds when:
-1. Claude can create a job search memory
-2. User can say "Add Anthropic to my pipeline - 5 stars, Senior Engineer, $320k+"
+1. Claude can create a travel memory
+2. User can say "Add Split Rock Lighthouse to my itinerary - 5 stars, iconic landmark, 2 hours"
 3. The markdown file shows this in a readable format
-4. Claude can read back the pipeline
+4. Claude can read back the itinerary
 5. User can open and edit the file directly
 
 ### Next Steps After MVP:

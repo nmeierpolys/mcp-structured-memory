@@ -116,4 +116,3 @@ Memory documents are stored as markdown files in:
 - Windows: `%LOCALAPPDATA%\mcp-structured-memory\`
 - Linux: `~/.local/share/mcp-structured-memory/`
 
-Override with `MEMORY_STORAGE_PATH` environment variable.

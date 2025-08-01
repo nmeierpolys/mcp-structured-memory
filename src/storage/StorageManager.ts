@@ -17,11 +17,6 @@ export class StorageManager {
   }
 
   private getStoragePath(): string {
-    const customPath = process.env.MEMORY_STORAGE_PATH;
-    if (customPath) {
-      return path.resolve(customPath.replace("~", os.homedir()));
-    }
-
     const platform = process.platform;
     switch (platform) {
       case "darwin":

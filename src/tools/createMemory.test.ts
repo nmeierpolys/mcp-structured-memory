@@ -22,7 +22,6 @@ describe('createMemory Tool', () => {
     vi.mocked(storageManager.writeMemory).mockResolvedValue(undefined)
     
     // Reset environment variable
-    delete process.env.MEMORY_STORAGE_PATH
   })
 
   afterEach(() => {
@@ -367,15 +366,6 @@ ${context}
       )
     })
 
-    it('should use environment variable when set', async () => {
-      process.env.MEMORY_STORAGE_PATH = '/custom/path'
-      
-      const result = await createMemoryTool(storageManager, { name: 'Test' })
-
-      expect(result.content[0].text).toContain(
-        'File location: /custom/path/test.md'
-      )
-    })
   })
 
   describe('Storage Manager Integration', () => {

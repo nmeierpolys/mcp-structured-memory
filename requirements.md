@@ -3,14 +3,14 @@
 ## Core Functionality Requirements
 
 ### Memory Management
-- **R1.1** Must support creating memories from predefined templates (job_search, research_project, real_estate_search, custom)
-- **R1.2** Each memory must have a unique identifier that's human-readable (e.g., "job-search-2025")
-- **R1.3** Must support multiple active memories of different types simultaneously
+- **R1.1** Must support creating flexible memory documents without predefined templates
+- **R1.2** Each memory must have a unique identifier that's human-readable (e.g., "minnesota-trip-2025")
+- **R1.3** Must support multiple active memories simultaneously
 - **R1.4** Memory files must be independent - no cross-memory dependencies for core functionality
 
 ### Data Structure
 - **R2.1** Memories must be stored as markdown files with YAML frontmatter
-- **R2.2** Each memory must have defined sections based on its template type
+- **R2.2** Each memory can have custom sections defined by the user
 - **R2.3** Sections must maintain their order and formatting when updated
 - **R2.4** Must support flexible markdown content without rigid structure
 - **R2.5** Must preserve user formatting and markdown features (bold, links, etc.)
@@ -30,14 +30,12 @@
   - macOS: `~/Library/Application Support/mcp-structured-memory/`
 - Windows: `%LOCALAPPDATA%\mcp-structured-memory\`
 - Linux: `~/.local/share/mcp-structured-memory/`
-- **R4.2** Must support override via `MEMORY_STORAGE_PATH` environment variable
 - **R4.3** Must create storage directory if it doesn't exist
 - **R4.4** Files must be readable/editable in any text editor
 
 ### File Format
 - **R5.1** Markdown files with YAML frontmatter containing:
   - id (unique identifier)
-  - type (template type)
   - created (timestamp)
   - updated (timestamp)
   - tags (array)
@@ -58,12 +56,12 @@
 
 ### Natural Language Interface
 - **R7.1** Must accept natural language commands through Claude/MCP clients
-- **R7.2** Must parse context from user input to populate templates
+- **R7.2** Must parse context from user input to create appropriate structure
 - **R7.3** Must provide helpful feedback about what was done
 - **R7.4** Must suggest next steps when appropriate
 
 ### External Editing
-- **R8.1** Must detect external file changes when `ENABLE_FILE_WATCH=true`
+- **R8.1** Must detect external file changes
 - **R8.2** Must reload and validate externally edited files
 - **R8.3** Must handle malformed files gracefully with clear errors
 - **R8.4** Must not overwrite external changes without user intent
@@ -74,31 +72,17 @@
 - **R9.3** Search must be case-insensitive
 - **R9.4** Must complete searches in under 100ms for typical memories
 
-## Template Requirements
+## Common Use Case Examples
 
-### Job Search Template
-- **R10.1** Must include suggested sections:
-  - search_criteria
-  - active_pipeline
-  - companies_ruled_out
-  - market_insights
-  - networking_contacts
-  - interview_notes
-- **R10.2** Content organization within sections is flexible
+### Travel Planning Example
+- Suggested sections: destinations, itinerary, accommodations, activities, restaurants, travel_tips, budget_tracker
+- Content organization within sections is flexible
 
-### Research Project Template
-- **R11.1** Must include suggested sections:
-  - research_questions
-  - literature_review
-  - methodology
-  - findings
-  - data_sources
-  - next_steps
+### Research Project Example
+- Suggested sections: research_questions, literature_review, methodology, findings, data_sources, next_steps
 
-### Real Estate Search Template
-- **R12.1** Must include suggested sections:
-  - search_criteria
-  - active_listings
+### Real Estate Search Example
+- Suggested sections: search_criteria, active_listings
   - visited_properties
   - rejected_properties
   - market_insights
@@ -142,7 +126,7 @@
 
 ### Import Capabilities
 - **R18.1** Must import from exported JSON
-- **R18.2** Must detect and validate template type on import
+- **R18.2** Must validate memory structure on import
 - **R18.3** Must handle conflicts (existing memory with same ID)
 
 ## Analysis Requirements
@@ -159,7 +143,6 @@
 - **R20.1** Must provide clear errors for:
   - Memory not found
   - Section not found
-  - Invalid template type
   - Malformed data
 - **R20.2** Must suggest corrections when possible
 
@@ -184,7 +167,7 @@
 ### Future Considerations
 
 - **Q1**: Should memories be able to reference each other? (Future feature)
-- **Q2**: Should we support memory templates from URL/GitHub? (Future feature)
+- **Q2**: Should we support example structures from URL/GitHub? (Future feature)
 - **Q3**: Should we support collaborative editing beyond basic file locking? (Future feature)
 
 ## Flexible Markdown Philosophy
@@ -215,7 +198,7 @@
 
 The implementation is complete when:
 1. All R* requirements are met
-2. A user can manage job search via natural language in Claude
+2. A user can manage travel plans via natural language in Claude
 3. Files can be edited externally without issues
 4. No data loss scenarios exist
 5. Performance targets are met

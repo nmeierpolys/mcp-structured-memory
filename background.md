@@ -14,7 +14,7 @@ Project memories are **living documents** that serve as persistent context for o
 ### Real Examples from Practice
 
 #### Job Search Memory
-Tracks search criteria, active opportunities, companies ruled out, market insights, and strategy evolution. Over time, it captures patterns like "Remote often means region-specific" and "Climate roles pay 50% less than AI roles" - insights that inform future decisions.
+Tracks destinations, itinerary planning, accommodations ruled out, travel insights, and trip evolution. Over time, it captures patterns like "Fall colors peak in late September" and "North Shore lodging books up months ahead" - insights that inform future planning.
 
 #### Travel Advisor Memory
 Maintains travel preferences (like motion sickness considerations), trip history, planned trips, and detailed research. Each trip adds to the knowledge base - from discovering the best Athens hotel rooftops to learning Santorini tender timing strategies.

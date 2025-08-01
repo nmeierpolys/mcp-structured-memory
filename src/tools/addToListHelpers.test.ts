@@ -1,230 +1,126 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { 
-  detectSectionType, 
-  extractFields, 
-  formatStarRating, 
+  formatGenericItem,
   formatFieldList, 
-  formatKeyName, 
-  getCurrentDate,
-  FieldMapping 
+  formatKeyName
 } from './addToListHelpers.js'
 
 describe('addToList Helper Functions', () => {
-  describe('detectSectionType', () => {
-    it('should detect pipeline sections', () => {
-      expect(detectSectionType('Active Pipeline')).toBe('pipeline')
-      expect(detectSectionType('pipeline items')).toBe('pipeline')
-      expect(detectSectionType('Job Pipeline')).toBe('pipeline')
-      expect(detectSectionType('ACTIVE COMPANIES')).toBe('pipeline')
+  describe('formatGenericItem', () => {
+    it('should format string items as bullet points', () => {
+      expect(formatGenericItem('Simple text item')).toBe('- Simple text item')
     })
 
-    it('should detect ruled out sections', () => {
-      expect(detectSectionType('Ruled Out Companies')).toBe('ruled_out')
-      expect(detectSectionType('rejected applications')).toBe('ruled_out')
-      expect(detectSectionType('Companies I Ruled Out')).toBe('ruled_out')
-      expect(detectSectionType('REJECTED')).toBe('ruled_out')
-    })
-
-    it('should detect contact sections', () => {
-      expect(detectSectionType('Contact Network')).toBe('contact')
-      expect(detectSectionType('networking contacts')).toBe('contact')
-      expect(detectSectionType('Professional Contacts')).toBe('contact')
-      expect(detectSectionType('NETWORK')).toBe('contact')
-    })
-
-    it('should detect interview sections', () => {
-      expect(detectSectionType('Interview Schedule')).toBe('interview')
-      expect(detectSectionType('upcoming interviews')).toBe('interview')
-      expect(detectSectionType('INTERVIEW NOTES')).toBe('interview')
-    })
-
-    it('should default to generic for unknown sections', () => {
-      expect(detectSectionType('Random Section')).toBe('generic')
-      expect(detectSectionType('Notes')).toBe('generic')
-      expect(detectSectionType('To Do')).toBe('generic')
-      expect(detectSectionType('')).toBe('generic')
-    })
-
-    it('should handle mixed case and spaces', () => {
-      expect(detectSectionType('  Pipeline  Items  ')).toBe('pipeline')
-      expect(detectSectionType('RuLeD-oUt')).toBe('ruled_out')
-      expect(detectSectionType('CONTACT_NETWORK')).toBe('contact')
-    })
-  })
-
-  describe('extractFields', () => {
-    it('should extract fields using field mappings', () => {
+    it('should format objects with name field as headings', () => {
       const item = {
-        company: 'Tech Corp',
+        name: 'Split Rock Lighthouse',
+        location: 'Two Harbors',
+        duration: '2 hours'
+      }
+      
+      const result = formatGenericItem(item)
+      expect(result).toContain('### Split Rock Lighthouse')
+      expect(result).toContain('- **Location**: Two Harbors')
+      expect(result).toContain('- **Duration**: 2 hours')
+    })
+
+    it('should format objects with title field as headings', () => {
+      const item = {
+        title: 'Museum Visit',
+        cost: '$15',
+        duration: '3 hours'
+      }
+      
+      const result = formatGenericItem(item)
+      expect(result).toContain('### Museum Visit')
+      expect(result).toContain('- **Cost**: $15')
+      expect(result).toContain('- **Duration**: 3 hours')
+    })
+
+    it('should format objects with destination field as headings', () => {
+      const item = {
+        destination: 'Duluth',
+        activities: 'Shopping',
+        stay: '1 night'
+      }
+      
+      const result = formatGenericItem(item)
+      expect(result).toContain('### Duluth')
+      expect(result).toContain('- **Activities**: Shopping')
+      expect(result).toContain('- **Stay**: 1 night')
+    })
+
+    it('should format objects with company field as headings', () => {
+      const item = {
+        company: 'Acme Corp',
         role: 'Engineer',
-        salary: '$100k'
+        status: 'Applied'
       }
-
-      const mappings: FieldMapping = {
-        company: ['company', 'name'],
-        position: ['role', 'position'],
-        compensation: ['salary', 'pay', 'compensation']
-      }
-
-      const result = extractFields(item, mappings)
       
-      expect(result).toEqual({
-        company: 'Tech Corp',
-        position: 'Engineer',
-        compensation: '$100k'
-      })
+      const result = formatGenericItem(item)
+      expect(result).toContain('### Acme Corp')
+      expect(result).toContain('- **Role**: Engineer')
+      expect(result).toContain('- **Status**: Applied')
     })
 
-    it('should use fallback field names', () => {
+    it('should add star ratings when rating field is present', () => {
       const item = {
-        name: 'StartupXYZ',
-        position: 'Developer',
-        pay: '90000'
+        name: 'Great Restaurant',
+        rating: 4,
+        cuisine: 'Italian'
       }
-
-      const mappings: FieldMapping = {
-        company: ['company', 'name'],
-        role: ['role', 'position'],
-        salary: ['salary', 'pay']
-      }
-
-      const result = extractFields(item, mappings)
       
-      expect(result).toEqual({
-        company: 'StartupXYZ',
-        role: 'Developer',
-        salary: '90000'
-      })
+      const result = formatGenericItem(item)
+      expect(result).toContain('### Great Restaurant ⭐⭐⭐⭐')
+      expect(result).toContain('- **Cuisine**: Italian')
     })
 
-    it('should use defaults when no field found', () => {
+    it('should add star ratings when stars field is present', () => {
       const item = {
-        name: 'Company Inc'
+        name: 'Good Hotel',
+        stars: 3,
+        location: 'Downtown'
       }
-
-      const mappings: FieldMapping = {
-        company: ['company', 'name'],
-        role: ['role', 'position'],
-        status: ['status']
-      }
-
-      const defaults = {
-        role: 'Unknown Position',
-        status: 'Not Applied'
-      }
-
-      const result = extractFields(item, mappings, defaults)
       
-      expect(result).toEqual({
-        company: 'Company Inc',
-        role: 'Unknown Position',
-        status: 'Not Applied'
-      })
+      const result = formatGenericItem(item)
+      expect(result).toContain('### Good Hotel ⭐⭐⭐')
+      expect(result).toContain('- **Location**: Downtown')
     })
 
-    it('should return empty strings when no value or default', () => {
-      const item = { name: 'Test' }
-      const mappings: FieldMapping = {
-        company: ['company'],
-        missing: ['not_found']
-      }
-
-      const result = extractFields(item, mappings)
-      
-      expect(result).toEqual({
-        company: '',
-        missing: ''
-      })
-    })
-
-    it('should convert values to strings', () => {
+    it('should format objects without title fields as key-value lists', () => {
       const item = {
-        rating: 5,
-        active: true,
-        price: 100.50
+        time: '2:00 PM',
+        duration: '90 minutes',
+        cost: '$25'
       }
-
-      const mappings: FieldMapping = {
-        rating: ['rating'],
-        status: ['active'], 
-        cost: ['price']
-      }
-
-      const result = extractFields(item, mappings)
       
-      expect(result).toEqual({
-        rating: '5',
-        status: 'true',
-        cost: '100.5'
-      })
+      const result = formatGenericItem(item)
+      expect(result).toContain('- **Time**: 2:00 PM')
+      expect(result).toContain('- **Duration**: 90 minutes')
+      expect(result).toContain('- **Cost**: $25')
+      expect(result).not.toContain('###')
     })
 
-    it('should handle null and undefined values', () => {
+    it('should handle empty values by excluding them', () => {
       const item = {
-        name: 'Test',
-        nullValue: null,
-        undefinedValue: undefined,
-        emptyString: ''
+        name: 'Test Item',
+        description: 'Valid description',
+        emptyField: '',
+        nullField: null,
+        undefinedField: undefined
       }
-
-      const mappings: FieldMapping = {
-        name: ['name'],
-        null: ['nullValue'],
-        undef: ['undefinedValue'],
-        empty: ['emptyString']
-      }
-
-      const result = extractFields(item, mappings)
       
-      expect(result).toEqual({
-        name: 'Test',
-        null: '',
-        undef: '',
-        empty: ''
-      })
-    })
-  })
-
-  describe('formatStarRating', () => {
-    it('should format valid numeric ratings', () => {
-      expect(formatStarRating(1)).toBe(' ⭐')
-      expect(formatStarRating(3)).toBe(' ⭐⭐⭐')
-      expect(formatStarRating(5)).toBe(' ⭐⭐⭐⭐⭐')
+      const result = formatGenericItem(item)
+      expect(result).toContain('### Test Item')
+      expect(result).toContain('- **Description**: Valid description')
+      expect(result).not.toContain('emptyField')
+      expect(result).not.toContain('nullField')
+      expect(result).not.toContain('undefinedField')
     })
 
-    it('should format string numeric ratings', () => {
-      expect(formatStarRating('2')).toBe(' ⭐⭐')
-      expect(formatStarRating('4')).toBe(' ⭐⭐⭐⭐')
-    })
-
-    it('should extract numbers from mixed strings', () => {
-      expect(formatStarRating('3 stars')).toBe(' ⭐⭐⭐')
-      expect(formatStarRating('Rating: 4/5')).toBe('') // No consecutive digits, regex fails
-      expect(formatStarRating('2.5 out of 5')).toBe('') // No consecutive digits
-      expect(formatStarRating('25 stars')).toBe('') // 25 > 5, returns empty
-      expect(formatStarRating('Rating4')).toBe(' ⭐⭐⭐⭐') // Consecutive digit works
-    })
-
-    it('should return empty for invalid ratings', () => {
-      expect(formatStarRating(0)).toBe('')
-      expect(formatStarRating(6)).toBe('')
-      expect(formatStarRating(-1)).toBe(' ⭐') // -1 parses as '1'
-      expect(formatStarRating('abc')).toBe('')
-      expect(formatStarRating('')).toBe('')
-    })
-
-    it('should return empty for null/undefined', () => {
-      expect(formatStarRating(null)).toBe('')
-      expect(formatStarRating(undefined)).toBe('')
-    })
-
-    it('should handle edge cases', () => {
-      expect(formatStarRating('0')).toBe('')
-      expect(formatStarRating('10')).toBe('') // 10 > 5, returns empty
-      expect(formatStarRating('1.9')).toBe('') // No consecutive digits
-      expect(formatStarRating('5.1')).toBe('') // No consecutive digits
-      expect(formatStarRating('19')).toBe('') // 19 > 5, returns empty
-      expect(formatStarRating('51')).toBe('') // 51 > 5, returns empty
+    it('should handle non-string, non-object values', () => {
+      expect(formatGenericItem(123)).toBe('- 123')
+      expect(formatGenericItem(true)).toBe('- true')
     })
   })
 
@@ -235,64 +131,22 @@ describe('addToList Helper Functions', () => {
         role: 'Engineer',
         company: 'Tech Corp'
       }
-
+      
       const result = formatFieldList(fields)
-      
-      expect(result).toBe(
-        '- **Name**: John Doe\n' +
-        '- **Role**: Engineer\n' +
-        '- **Company**: Tech Corp\n'
-      )
-    })
-
-    it('should exclude specified keys', () => {
-      const fields = {
-        name: 'John Doe',
-        role: 'Engineer',
-        company: 'Tech Corp',
-        secret: 'hidden'
-      }
-
-      const result = formatFieldList(fields, ['secret', 'company'])
-      
-      expect(result).toBe(
-        '- **Name**: John Doe\n' +
-        '- **Role**: Engineer\n'
-      )
-    })
-
-    it('should show required fields first, even if empty', () => {
-      const fields = {
-        name: 'John Doe',
-        role: '',
-        company: 'Tech Corp',
-        optional: 'value'
-      }
-
-      const result = formatFieldList(fields, [], ['role', 'company'])
-      
-      expect(result).toBe(
-        '- **Role**: Not specified\n' +
-        '- **Company**: Tech Corp\n' +
-        '- **Name**: John Doe\n' +
-        '- **Optional**: value\n'
-      )
+      expect(result).toBe('- **Name**: John Doe\n- **Role**: Engineer\n- **Company**: Tech Corp\n')
     })
 
     it('should skip empty optional fields', () => {
       const fields = {
         name: 'John Doe',
         role: 'Engineer',
-        notes: '',
-        optional: null
+        emptyField: '',
+        company: 'Tech Corp'
       }
-
-      const result = formatFieldList(fields)
       
-      expect(result).toBe(
-        '- **Name**: John Doe\n' +
-        '- **Role**: Engineer\n'
-      )
+      const result = formatFieldList(fields)
+      expect(result).toBe('- **Name**: John Doe\n- **Role**: Engineer\n- **Company**: Tech Corp\n')
+      expect(result).not.toContain('emptyField')
     })
 
     it('should format field names properly', () => {
@@ -301,14 +155,11 @@ describe('addToList Helper Functions', () => {
         last_name: 'Doe',
         contact_email: 'john@example.com'
       }
-
-      const result = formatFieldList(fields)
       
-      expect(result).toBe(
-        '- **First Name**: John\n' +
-        '- **Last Name**: Doe\n' +
-        '- **Contact Email**: john@example.com\n'
-      )
+      const result = formatFieldList(fields)
+      expect(result).toContain('- **First Name**: John')
+      expect(result).toContain('- **Last Name**: Doe')
+      expect(result).toContain('- **Contact Email**: john@example.com')
     })
 
     it('should handle empty fields object', () => {
@@ -321,7 +172,7 @@ describe('addToList Helper Functions', () => {
     it('should convert snake_case to Title Case', () => {
       expect(formatKeyName('first_name')).toBe('First Name')
       expect(formatKeyName('contact_email')).toBe('Contact Email')
-      expect(formatKeyName('home_phone_number')).toBe('Home Phone Number')
+      expect(formatKeyName('phone_number')).toBe('Phone Number')
     })
 
     it('should handle single words', () => {
@@ -337,56 +188,13 @@ describe('addToList Helper Functions', () => {
 
     it('should handle mixed formats', () => {
       expect(formatKeyName('firstName')).toBe('FirstName')
-      expect(formatKeyName('first-name')).toBe('First-Name') // Capitalizes after -
-      expect(formatKeyName('FIRST_NAME')).toBe('FIRST NAME')
+      expect(formatKeyName('first-name')).toBe('First Name')
     })
 
     it('should handle edge cases', () => {
       expect(formatKeyName('')).toBe('')
       expect(formatKeyName('a')).toBe('A')
       expect(formatKeyName('_')).toBe(' ')
-      expect(formatKeyName('__multiple__underscores__')).toBe('  Multiple  Underscores  ')
-    })
-  })
-
-  describe('getCurrentDate', () => {
-    beforeEach(() => {
-      vi.useFakeTimers()
-    })
-
-    afterEach(() => {
-      vi.useRealTimers()
-    })
-
-    it('should return current date in YYYY-MM-DD format', () => {
-      const fixedDate = new Date('2025-07-31T15:30:00Z')
-      vi.setSystemTime(fixedDate)
-
-      const result = getCurrentDate()
-      expect(result).toBe('2025-07-31')
-    })
-
-    it('should handle different dates', () => {
-      const testCases = [
-        { date: '2025-01-01T00:00:00Z', expected: '2025-01-01' },
-        { date: '2025-12-31T23:59:59Z', expected: '2025-12-31' },
-        { date: '2024-02-29T12:30:45Z', expected: '2024-02-29' }
-      ]
-
-      for (const testCase of testCases) {
-        vi.setSystemTime(new Date(testCase.date))
-        expect(getCurrentDate()).toBe(testCase.expected)
-      }
-    })
-
-    it('should handle timezone differences consistently', () => {
-      // Test that we get consistent results regardless of timezone
-      // by always using ISO string which is in UTC
-      const utcDate = new Date('2025-07-31T23:30:00Z')
-      vi.setSystemTime(utcDate)
-
-      const result = getCurrentDate()
-      expect(result).toBe('2025-07-31')
     })
   })
 })

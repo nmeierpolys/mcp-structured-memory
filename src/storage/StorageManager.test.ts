@@ -99,7 +99,6 @@ describe('StorageManager', () => {
     mockOs = vi.mocked(os)
     
     // Reset environment
-    delete process.env.MEMORY_STORAGE_PATH
     
     // Default OS platform
     Object.defineProperty(process, 'platform', {
@@ -115,16 +114,6 @@ describe('StorageManager', () => {
   })
 
   describe('Platform-specific Path Generation', () => {
-    it('should use custom path from environment variable', () => {
-      process.env.MEMORY_STORAGE_PATH = '~/custom/memory/path'
-      mockOs.homedir.mockReturnValue('/home/user')
-      mockPath.resolve.mockReturnValue('/home/user/custom/memory/path')
-      
-      void new StorageManager()
-      
-      expect(mockPath.resolve).toHaveBeenCalledWith('/home/user/custom/memory/path')
-    })
-
     it('should generate macOS specific path', () => {
       Object.defineProperty(process, 'platform', {
         value: 'darwin',
@@ -174,16 +163,6 @@ describe('StorageManager', () => {
         'share',
         'mcp-structured-memory'
       )
-    })
-
-    it('should handle tilde expansion in custom path', () => {
-      process.env.MEMORY_STORAGE_PATH = '~/Documents/memories'
-      mockOs.homedir.mockReturnValue('/home/user')
-      mockPath.resolve.mockReturnValue('/home/user/Documents/memories')
-      
-      void new StorageManager()
-      
-      expect(mockPath.resolve).toHaveBeenCalledWith('/home/user/Documents/memories')
     })
   })
 

@@ -32,9 +32,9 @@ describe('listMemories Tool', () => {
       expect(result.content[0].text).toContain('No memory documents found.')
       expect(result.content[0].text).toContain('To create your first memory document, use the create_memory tool')
       expect(result.content[0].text).toContain('Examples:')
-      expect(result.content[0].text).toContain('"Create a memory document called \'job search 2025\'"')
-      expect(result.content[0].text).toContain('"Create a memory document for \'my research project\' with context about climate change"')
-      expect(result.content[0].text).toContain('"Create a memory document called \'house hunting\' with context about looking in Seattle"')
+      expect(result.content[0].text).toContain('"Create a memory document called \'minnesota trip 2025\'"')
+      expect(result.content[0].text).toContain('"Create a memory document for \'my travel plans\' with context about exploring the North Shore and Twin Cities"')
+      expect(result.content[0].text).toContain('"Create a memory document called \'midwest adventure\' with context about visiting state parks and local attractions"')
     })
 
     it('should return correct response structure when no memories exist', async () => {
