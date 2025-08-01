@@ -79,7 +79,7 @@ export class StorageManager {
 
       const content = await fs.readFile(filePath, "utf-8");
       await fs.writeFile(backupPath, content, "utf-8");
-    } catch (error) {
+    } catch (_error) {
       // File doesn't exist yet, no backup needed
     }
   }
@@ -165,7 +165,7 @@ export class StorageManager {
       return summaries.sort(
         (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
       );
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
