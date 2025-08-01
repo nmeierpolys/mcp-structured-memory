@@ -120,7 +120,7 @@ describe('StorageManager', () => {
       mockOs.homedir.mockReturnValue('/home/user')
       mockPath.resolve.mockReturnValue('/home/user/custom/memory/path')
       
-      const manager = new StorageManager()
+      void new StorageManager()
       
       expect(mockPath.resolve).toHaveBeenCalledWith('/home/user/custom/memory/path')
     })
@@ -132,7 +132,7 @@ describe('StorageManager', () => {
       })
       mockOs.homedir.mockReturnValue('/Users/testuser')
       
-      const manager = new StorageManager()
+      void new StorageManager()
       
       expect(mockPath.join).toHaveBeenCalledWith(
         '/Users/testuser',
@@ -149,7 +149,7 @@ describe('StorageManager', () => {
       })
       mockOs.homedir.mockReturnValue('C:\\Users\\testuser')
       
-      const manager = new StorageManager()
+      void new StorageManager()
       
       expect(mockPath.join).toHaveBeenCalledWith(
         'C:\\Users\\testuser',
@@ -166,7 +166,7 @@ describe('StorageManager', () => {
       })
       mockOs.homedir.mockReturnValue('/home/testuser')
       
-      const manager = new StorageManager()
+      void new StorageManager()
       
       expect(mockPath.join).toHaveBeenCalledWith(
         '/home/testuser',
@@ -181,7 +181,7 @@ describe('StorageManager', () => {
       mockOs.homedir.mockReturnValue('/home/user')
       mockPath.resolve.mockReturnValue('/home/user/Documents/memories')
       
-      const manager = new StorageManager()
+      void new StorageManager()
       
       expect(mockPath.resolve).toHaveBeenCalledWith('/home/user/Documents/memories')
     })

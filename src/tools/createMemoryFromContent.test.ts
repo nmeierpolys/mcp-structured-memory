@@ -364,7 +364,7 @@ Currency: $100, €85, £75, ¥1000
 Quotes: "smart quotes" and 'apostrophes'
 Symbols: !@#$%^&*()_+-={}[]|\\:";'<>?,./~`;
 
-      const result = await createMemoryFromContentTool(storageManager, {
+      void await createMemoryFromContentTool(storageManager, {
         name: "Special Characters",
         content: specialContent,
       });
@@ -387,7 +387,7 @@ Symbols: !@#$%^&*()_+-={}[]|\\:";'<>?,./~`;
 
 Content here.`;
 
-      const result = await createMemoryFromContentTool(storageManager, {
+      void await createMemoryFromContentTool(storageManager, {
         name: "Whitespace Test",
         content: whitespaceContent,
       });

@@ -157,7 +157,7 @@ describe('createMemory Tool', () => {
 
   describe('Memory Content Generation', () => {
     it('should create memory without initial context', async () => {
-      const result = await createMemoryTool(storageManager, { name: 'Test Memory' })
+      void await createMemoryTool(storageManager, { name: 'Test Memory' })
 
       expect(storageManager.writeMemory).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -171,7 +171,7 @@ describe('createMemory Tool', () => {
     })
 
     it('should create memory with initial context', async () => {
-      const result = await createMemoryTool(storageManager, {
+      void await createMemoryTool(storageManager, {
         name: 'Project Notes',
         initial_context: 'This is a project about API development.'
       })
