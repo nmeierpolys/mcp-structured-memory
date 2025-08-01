@@ -1,5 +1,5 @@
 {
-  "name": "mcp-structured-memory",
+  "name": "@nmeierpolys/mcp-structured-memory",
   "version": "0.1.0",
   "description": "A Model Context Protocol server that automatically maintains structured, domain-specific memory documents for focused projects",
   "main": "dist/index.js",
@@ -59,5 +59,14 @@
   "bugs": {
     "url": "https://github.com/nmeierpolys/mcp-structured-memory/issues"
   },
-  "homepage": "https://github.com/nmeierpolys/mcp-structured-memory#readme"
+  "homepage": "https://github.com/nmeierpolys/mcp-structured-memory#readme",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

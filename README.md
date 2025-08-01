@@ -24,7 +24,7 @@ Memory documents are stored as markdown files, primarily updated automatically b
 
 ### Option 1: Install from npm (when published)
 ```bash
-npm install -g mcp-structured-memory
+npm install -g @nmeierpolys/mcp-structured-memory
 ```
 
 ### Option 2: Install from source
@@ -44,8 +44,8 @@ Edit the `claude_desktop_config.json` file with the following entry:
 {
   "mcpServers": {
     "mcp-structured-memory": {
-      "command": "node",
-      "args": ["/path/to/mcp-structured-memory/dist/index.js"]
+      "command": "npx",
+      "args": ["@nmeierpolys/mcp-structured-memory"]
     }
   }
 }

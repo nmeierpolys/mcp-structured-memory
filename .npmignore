@@ -1,0 +1,34 @@
+# Source files
+src/
+tests/
+*.test.ts
+*.test.js
+
+# Development files
+tsconfig.json
+vitest.config.ts
+.eslintrc.js
+.eslintrc.json
+eslint.config.js
+
+# Build artifacts (except dist)
+node_modules/
+coverage/
+
+# Git and IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# CI/CD
+.github/
+
+# Development docs
+CLAUDE.md
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
