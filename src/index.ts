@@ -31,7 +31,7 @@ const server = new Server(
   }
 );
 
-// Initialize storage manager
+// Initialize storage manager for handling memory persistence
 const storageManager = new StorageManager();
 
 // List available tools
