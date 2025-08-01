@@ -1,0 +1,43 @@
+version: 2
+updates:
+  # Enable updates for npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Group updates by type
+    groups:
+      typescript-eslint:
+        patterns:
+          - "@typescript-eslint/*"
+      vitest:
+        patterns:
+          - "@vitest/*"
+          - "vitest"
+          - "vite"
+      types:
+        patterns:
+          - "@types/*"
+    # Limit number of open PRs
+    open-pull-requests-limit: 10
+    # Auto-approve minor and patch updates
+    reviewers:
+      - "nmeierpolys"
+    # Commit message configuration
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+
+  # Enable updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
