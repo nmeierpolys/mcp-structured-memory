@@ -24,7 +24,7 @@ describe('getMemorySummaryTool Integration Tests', () => {
     // Clean up test files
     try {
       await fs.rm(testDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch (_error) {
       // Ignore cleanup errors
     }
     delete process.env.MEMORY_STORAGE_PATH;
