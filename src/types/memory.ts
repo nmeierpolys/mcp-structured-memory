@@ -30,7 +30,7 @@ export interface MemorySection {
 
 export interface CreateMemoryParams {
   name: string;
-  initial_context?: string;
+  content?: string;
 }
 
 export interface AddToListParams {
@@ -84,9 +84,3 @@ export interface GetFullMemoryParams {
   memory_id: string;
 }
 
-export interface CreateMemoryFromContentParams {
-  name: string;
-  content: string;
-  tags?: string[];
-  status?: string;
-}

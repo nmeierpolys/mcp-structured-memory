@@ -169,10 +169,10 @@ describe('createMemory Tool', () => {
       )
     })
 
-    it('should create memory with initial context', async () => {
+    it('should create memory with content', async () => {
       void await createMemoryTool(storageManager, {
         name: 'Project Notes',
-        initial_context: 'This is a project about API development.'
+        content: '# Project Notes\n\n## Context\n\nThis is a project about API development.\n\n## Notes\n\n[Add your notes and organize into sections as needed]'
       })
 
       expect(storageManager.writeMemory).toHaveBeenCalledWith(
@@ -190,35 +190,35 @@ This is a project about API development.
       )
     })
 
-    it('should handle multi-line initial context', async () => {
-      const context = `This is line 1
-This is line 2
-This is line 3`
-
-      await createMemoryTool(storageManager, {
-        name: 'Multi Line Test',
-        initial_context: context
-      })
-
-      expect(storageManager.writeMemory).toHaveBeenCalledWith(
-        expect.objectContaining({
-          content: `# Multi Line Test
+    it('should handle multi-line content', async () => {
+      const content = `# Multi Line Test
 
 ## Context
 
-${context}
+This is line 1
+This is line 2
+This is line 3
 
 ## Notes
 
 [Add your notes and organize into sections as needed]`
+
+      await createMemoryTool(storageManager, {
+        name: 'Multi Line Test',
+        content: content
+      })
+
+      expect(storageManager.writeMemory).toHaveBeenCalledWith(
+        expect.objectContaining({
+          content: content
         })
       )
     })
 
-    it('should handle empty initial context', async () => {
+    it('should handle empty content', async () => {
       await createMemoryTool(storageManager, {
         name: 'Test',
-        initial_context: ''
+        content: ''
       })
 
       expect(storageManager.writeMemory).toHaveBeenCalledWith(
@@ -313,15 +313,15 @@ ${context}
       expect(result.content[0].text).not.toContain('Initial context has been added')
     })
 
-    it('should return success response with initial context', async () => {
+    it('should return success response with content', async () => {
       const result = await createMemoryTool(storageManager, {
         name: 'Project Notes',
-        initial_context: 'Some context'
+        content: '# Project Notes\n\n## Context\n\nSome context'
       })
 
       expect(result.content[0].text).toContain('Successfully created memory document: "Project Notes"')
       expect(result.content[0].text).toContain('Memory ID: project-notes')
-      expect(result.content[0].text).toContain('Initial context has been added to get you started.')
+      expect(result.content[0].text).toContain('The memory document has been created with your content and is ready for use.')
     })
 
     it('should include usage instructions', async () => {
@@ -331,41 +331,8 @@ ${context}
       expect(result.content[0].text).toContain('Add items to any section using natural language')
       expect(result.content[0].text).toContain('Create new sections by adding content to them')
       expect(result.content[0].text).toContain('Edit the file directly in any text editor')
-      expect(result.content[0].text).toContain('Start by saying something like "Add [item] to my [section name]"')
+      expect(result.content[0].text).toContain('The memory will automatically grow and improve as conversations continue')
     })
-  })
-
-  describe('Storage Path Handling', () => {
-    it('should use default macOS path when no environment variable set', async () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' })
-      
-      const result = await createMemoryTool(storageManager, { name: 'Test' })
-
-      expect(result.content[0].text).toContain(
-        'File location: ~/Library/Application Support/mcp-structured-memory/test.md'
-      )
-    })
-
-    it('should use default Windows path when on Windows', async () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' })
-      
-      const result = await createMemoryTool(storageManager, { name: 'Test' })
-
-      expect(result.content[0].text).toContain(
-        'File location: %LOCALAPPDATA%\\mcp-structured-memory/test.md'
-      )
-    })
-
-    it('should use default Linux path when on Linux', async () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' })
-      
-      const result = await createMemoryTool(storageManager, { name: 'Test' })
-
-      expect(result.content[0].text).toContain(
-        'File location: ~/.local/share/mcp-structured-memory/test.md'
-      )
-    })
-
   })
 
   describe('Storage Manager Integration', () => {
@@ -447,32 +414,32 @@ ${context}
       )
     })
 
-    it('should handle very long initial context', async () => {
-      const longContext = 'Context '.repeat(1000)
+    it('should handle very long content', async () => {
+      const longContent = 'Content '.repeat(1000)
       
       await createMemoryTool(storageManager, {
         name: 'Test',
-        initial_context: longContext.trim()
+        content: longContent.trim()
       })
 
       expect(storageManager.writeMemory).toHaveBeenCalledWith(
         expect.objectContaining({
-          content: expect.stringContaining(longContext.trim())
+          content: longContent.trim()
         })
       )
     })
 
-    it('should handle initial context with special markdown characters', async () => {
-      const context = '# This is not a heading\n**Bold** and *italic* text\n- List item'
+    it('should handle content with special markdown characters', async () => {
+      const content = '# This is a heading\n**Bold** and *italic* text\n- List item'
       
       await createMemoryTool(storageManager, {
         name: 'Test',
-        initial_context: context
+        content: content
       })
 
       expect(storageManager.writeMemory).toHaveBeenCalledWith(
         expect.objectContaining({
-          content: expect.stringContaining(context)
+          content: content
         })
       )
     })
