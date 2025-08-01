@@ -1,10 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { StorageManager } from "../storage/StorageManager.js";
-import { createMemoryTool } from "./createMemory.js";
-import { updateSectionTool } from "./updateSection.js";
-import { getSectionTool } from "./getSection.js";
 import { getFullMemoryTool } from "./getFullMemory.js";
-import { addToListTool } from "./addToList.js";
 import { Memory } from "../types/memory.js";
 
 describe("Markdown Formatting Support", () => {

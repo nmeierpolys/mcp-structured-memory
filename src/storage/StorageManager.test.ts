@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { StorageManager } from './StorageManager.js'
-import { Memory, MemoryMetadata } from '../types/memory.js'
+import { Memory } from '../types/memory.js'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import * as os from 'os'

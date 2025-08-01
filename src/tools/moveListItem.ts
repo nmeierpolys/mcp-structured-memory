@@ -30,7 +30,7 @@ export async function moveListItemTool(
     throw new Error(`Source section '${params.from_section}' not found in memory document '${params.memory_id}'`);
   }
 
-  let toSection = storageManager.findSection(memory.content, params.to_section);
+  const toSection = storageManager.findSection(memory.content, params.to_section);
   const toSectionExists = toSection !== null;
 
   // Parse the from section to find and extract the item

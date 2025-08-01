@@ -12,7 +12,7 @@ describe("createMemoryFromContentTool", () => {
     writeMemoryCalls = [];
     
     // Mock storage manager methods
-    storageManager.readMemory = async (id: string) => null; // No existing memories
+    storageManager.readMemory = async (_id: string) => null; // No existing memories
     storageManager.writeMemory = async (memory: Memory) => {
       writeMemoryCalls.push(memory);
     };

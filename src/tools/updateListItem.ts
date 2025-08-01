@@ -59,7 +59,7 @@ export async function updateListItemTool(
   
   // Extract the current item content
   const currentItemLines = lines.slice(itemStartIndex, itemEndIndex + 1);
-  let updatedItemLines = [...currentItemLines];
+  const updatedItemLines = [...currentItemLines];
   
   // Apply updates based on the format we can detect
   Object.entries(params.updates).forEach(([field, value]) => {
