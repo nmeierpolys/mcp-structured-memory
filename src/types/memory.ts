@@ -79,3 +79,14 @@ export interface MoveListItemParams {
   item_identifier: string;
   reason?: string;
 }
+
+export interface GetFullMemoryParams {
+  memory_id: string;
+}
+
+export interface CreateMemoryFromContentParams {
+  name: string;
+  content: string;
+  tags?: string[];
+  status?: string;
+}

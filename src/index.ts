@@ -16,6 +16,8 @@ import { searchWithinMemoryTool } from "./tools/searchWithinMemory.js";
 import { updateSectionTool } from "./tools/updateSection.js";
 import { updateListItemTool } from "./tools/updateListItem.js";
 import { moveListItemTool } from "./tools/moveListItem.js";
+import { getFullMemoryTool } from "./tools/getFullMemory.js";
+import { createMemoryFromContentTool } from "./tools/createMemoryFromContent.js";
 
 const server = new Server(
   {
@@ -38,7 +40,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "create_memory",
-        description: "Create a new structured memory document",
+        description: "Create a new structured memory document. Supports full Markdown formatting including headings (H1-H6), **bold**, *italic*, `code`, [links](url), fenced code blocks, lists, tables, and more. Returns CRITICAL setup instructions - the memory will NOT work until user manually updates their project context file.",
         inputSchema: {
           type: "object",
           properties: {
@@ -48,7 +50,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             initial_context: {
               type: "string",
-              description: "Optional context to initialize the memory with specific information",
+              description: "Optional context to initialize the memory with. Supports full Markdown formatting including headings, **bold**, *italic*, `code`, [links](url), tables, lists, and more.",
             },
           },
           required: ["name"],
@@ -138,7 +140,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "update_section",
-        description: "Update an entire section of a memory document",
+        description: "Update an entire section of a memory document. Content supports full Markdown formatting including headings, **bold**, *italic*, `code blocks`, [links](url), lists, tables, and all standard Markdown syntax.",
         inputSchema: {
           type: "object",
           properties: {
@@ -152,7 +154,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             content: {
               type: "string",
-              description: "The new content for the section",
+              description: "The new content for the section. Supports full Markdown: headings (#), **bold**, *italic*, `code`, [links](url), ```code blocks```, lists, tables, etc.",
             },
             mode: {
               type: "string",
@@ -219,6 +221,47 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["memory_id", "from_section", "to_section", "item_identifier"],
         },
       },
+      {
+        name: "get_full_memory",
+        description: "Retrieve the complete content of a memory document with all Markdown formatting preserved (headings, **bold**, *italic*, `code`, [links](url), tables, lists, etc.)",
+        inputSchema: {
+          type: "object",
+          properties: {
+            memory_id: {
+              type: "string",
+              description: "The ID of the memory document to retrieve",
+            },
+          },
+          required: ["memory_id"],
+        },
+      },
+      {
+        name: "create_memory_from_content",
+        description: "Create a new structured memory document from existing Markdown content. Supports full Markdown formatting including headings (H1-H6), **bold**, *italic*, `code`, [links](url), fenced code blocks, lists, tables, and more. Returns CRITICAL setup instructions - the memory will NOT work until user manually updates their project context file.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              description: "Unique identifier/name for this memory",
+            },
+            content: {
+              type: "string",
+              description: "The complete Markdown content for the memory document. Supports full Markdown: headings (#), **bold**, *italic*, `code`, [links](url), ```code blocks```, lists, tables, etc.",
+            },
+            tags: {
+              type: "array",
+              items: { type: "string" },
+              description: "Optional tags to categorize this memory",
+            },
+            status: {
+              type: "string",
+              description: "Optional status for the memory (default: 'active')",
+            },
+          },
+          required: ["name", "content"],
+        },
+      },
     ],
   };
 });
@@ -255,6 +298,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case "move_list_item":
         return await moveListItemTool(storageManager, args);
+
+      case "get_full_memory":
+        return await getFullMemoryTool(storageManager, args);
+
+      case "create_memory_from_content":
+        return await createMemoryFromContentTool(storageManager, args);
 
       default:
         throw new Error(`Unknown tool: ${name}`);

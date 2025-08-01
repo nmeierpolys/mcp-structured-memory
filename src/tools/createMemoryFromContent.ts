@@ -1,14 +1,18 @@
 import { StorageManager } from "../storage/StorageManager.js";
-import { CreateMemoryParams, Memory } from "../types/memory.js";
+import { CreateMemoryFromContentParams, Memory } from "../types/memory.js";
 
-export async function createMemoryTool(
+export async function createMemoryFromContentTool(
   storageManager: StorageManager,
   args: any
 ): Promise<any> {
-  const params = args as CreateMemoryParams;
+  const params = args as CreateMemoryFromContentParams;
 
   if (!params.name) {
     throw new Error("Memory document name is required");
+  }
+
+  if (!params.content) {
+    throw new Error("Memory content is required");
   }
 
   // Generate memory ID from name (sanitize for filename)
@@ -17,6 +21,7 @@ export async function createMemoryTool(
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
     .trim();
 
   if (!memoryId) {
@@ -29,15 +34,8 @@ export async function createMemoryTool(
     throw new Error(`Memory document with ID '${memoryId}' already exists`);
   }
 
-  // Generate flexible content based on context
-  const title = params.name;
-  let content = '';
-  
-  if (params.initial_context) {
-    content = `## Context\n\n${params.initial_context}\n\n## Notes\n\n[Add your notes and organize into sections as needed]`;
-  } else {
-    content = `## Notes\n\n[Add your notes and organize into sections as needed]`;
-  }
+  // Use provided content directly
+  const content = params.content;
 
   // Create memory object
   const memory: Memory = {
@@ -45,10 +43,10 @@ export async function createMemoryTool(
       id: memoryId,
       created: new Date().toISOString(),
       updated: new Date().toISOString(),
-      tags: [],
-      status: "active",
+      tags: params.tags || [],
+      status: params.status || "active",
     },
-    content: `# ${title}\n\n${content}`,
+    content: content,
     filePath: "",
   };
 
@@ -63,6 +61,11 @@ export async function createMemoryTool(
       ? "%LOCALAPPDATA%\\mcp-structured-memory"
       : "~/.local/share/mcp-structured-memory");
 
+  // Count sections and words for summary
+  const sections = Math.max(0, content.split(/^#+\s/m).length - 1);
+  const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+  const lines = content.split('\n').length;
+
   return {
     content: [
       {
@@ -72,13 +75,14 @@ export async function createMemoryTool(
 Memory ID: ${memoryId}
 File location: ${storagePath}/${memoryId}.md
 
-${
-  params.initial_context
-    ? `Initial context has been added to get you started.\n`
-    : ""
-}The memory document is ready for you to organize with custom sections as needed. You can:
-- Add items to any section using natural language
-- Create new sections by adding content to them
+Content imported:
+- **Sections**: ${sections}
+- **Words**: ${words}
+- **Lines**: ${lines}
+${params.tags?.length ? `- **Tags**: ${params.tags.join(", ")}\n` : ""}${params.status ? `- **Status**: ${params.status}\n` : ""}
+The memory document has been created with your existing content and is ready for use. You can:
+- Add new items to any section using natural language
+- Update existing sections with new content
 - Edit the file directly in any text editor
 
 ⚠️ **CRITICAL - ACTION REQUIRED**: 
@@ -94,7 +98,7 @@ Update the memory with new context that would be helpful for future requests usi
 
 ⚠️ **Without this manual setup, the memory will not be automatically loaded in new conversations and will be essentially unused.**
 
-Start by saying something like "Add [item] to my [section name]" and the section will be created automatically.`,
+Start by saying something like "Add [item] to my [section name]" or "Update my [section name] with [new content]".`,
       },
     ],
   };
