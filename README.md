@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that provides structured, domain-specific memory management through markdown files. This is particularly useful for ongoing projects around a particular area of focus where you want to accumulate valuable context over time. Examples include focused domains like travel planning, research projects, real estate search, investment theses, product planning, and career development.
 
+<a href="https://glama.ai/mcp/servers/@nmeierpolys/mcp-structured-memory">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@nmeierpolys/mcp-structured-memory/badge" alt="mcp-structured-memory MCP server" />
+</a>
+
 ## Why Structured Memory?
 
 Traditional MCP memory servers use semantic search across scattered conversation snippets. This works well for general recall but fails for focused projects that need organized, categorical information.
@@ -100,4 +104,3 @@ Memory document files are stored as markdown files in:
 - **macOS**: `~/Library/Application Support/mcp-structured-memory/`
 - **Windows**: `%LOCALAPPDATA%\mcp-structured-memory\`
 - **Linux**: `~/.local/share/mcp-structured-memory/`
-
