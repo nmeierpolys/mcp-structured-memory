@@ -305,11 +305,42 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 async function main() {
+  // Validate Node.js version
+  const nodeVersion = process.version;
+  const majorVersion = parseInt(nodeVersion.substring(1).split('.')[0]);
+  if (majorVersion < 20) {
+    console.error(`Error: Node.js version ${nodeVersion} is not supported. Please use Node.js 20 or higher.`);
+    process.exit(1);
+  }
+
+  // Add environment detection for debugging
+  const isDebug = process.env.MCP_STRUCTURED_MEMORY_DEBUG === 'true';
+  if (isDebug) {
+    console.error(`Debug: Node.js version: ${nodeVersion}`);
+    console.error(`Debug: Platform: ${process.platform}`);
+    console.error(`Debug: Working directory: ${process.cwd()}`);
+  }
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
   // Log to stderr so it doesn't interfere with MCP communication
   console.error("Structured Memory MCP Server running on stdio");
+  if (isDebug) {
+    console.error("Debug: MCP server connected successfully");
+  }
+
+  // Graceful shutdown handling for LM Studio and other clients
+  const cleanup = () => {
+    if (isDebug) {
+      console.error("Debug: Received shutdown signal, cleaning up...");
+    }
+    process.exit(0);
+  };
+
+  process.on('SIGINT', cleanup);
+  process.on('SIGTERM', cleanup);
+  process.on('SIGHUP', cleanup);
 }
 
 if (require.main === module) {

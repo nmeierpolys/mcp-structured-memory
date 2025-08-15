@@ -55,6 +55,48 @@ Edit the `claude_desktop_config.json` file with the following entry:
 }
 ```
 
+### For LM Studio
+
+1. **Install the MCP server** following the installation steps above
+
+2. **Configure LM Studio** to use MCP by adding the server to your MCP configuration:
+   - Open LM Studio
+   - Go to Settings → Model Context Protocol
+   - Add a new MCP server with the following configuration:
+     - **Name**: `mcp-structured-memory`
+     - **Command**: `npx`
+     - **Args**: `@nmeierpolys/mcp-structured-memory`
+   - Save the configuration and restart LM Studio
+
+3. **Verify the connection** by checking that the MCP tools are available in your chat interface
+
+4. **Start using structured memory** by asking your LLM to create a new memory document for your project
+
+**Note**: Make sure Node.js is installed and accessible from your system PATH, as LM Studio will need to execute the `npx` command to run the MCP server.
+
+#### Troubleshooting LM Studio Connection
+
+If you're having issues with the MCP server in LM Studio:
+
+1. **Enable debug logging** by setting an environment variable:
+   ```bash
+   export MCP_STRUCTURED_MEMORY_DEBUG=true
+   ```
+   Then restart LM Studio to see detailed debug information in the logs.
+
+2. **Check Node.js version**: The server requires Node.js 20 or higher. Verify with:
+   ```bash
+   node --version
+   ```
+
+3. **Verify the server starts manually**:
+   ```bash
+   npx @nmeierpolys/mcp-structured-memory
+   ```
+   The server should output "Structured Memory MCP Server running on stdio" and wait for input.
+
+4. **Check LM Studio logs** for any error messages related to MCP server startup or communication.
+
 ## Available Tools
 
 - **create_memory** - Create a new memory document with optional initial content
