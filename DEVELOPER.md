@@ -1,0 +1,212 @@
+# Developer Guide
+
+This document contains information for developers working on the `@nmeierpolys/mcp-structured-memory` package.
+
+## Development Setup
+
+### Prerequisites
+- Node.js >= 20.0.0
+- npm
+
+### Installation
+```bash
+npm install
+```
+
+### Development Commands
+
+```bash
+# Build the project
+npm run build
+
+# Build in watch mode
+npm run build:watch
+
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests with UI
+npm run test:ui
+
+# Lint code
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Clean build directory
+npm run clean
+
+# Start the built package
+npm start
+
+# Development mode (build + start)
+npm run dev
+
+# Pre-release checks (tests + linting)
+npm run pre-release
+```
+
+## Release Process
+
+The package includes automated release scripts that handle version bumping, git tagging, and npm publishing. All release commands automatically run pre-release checks to ensure code quality.
+
+### Release Commands
+
+#### Patch Release (Bug Fixes)
+```bash
+npm run release:patch
+```
+- Runs tests and linting checks
+- Bumps patch version (e.g., 0.1.2 → 0.1.3)
+- Creates git commit and tag
+- Pushes to GitHub
+- Publishes to npm
+
+#### Minor Release (New Features)
+```bash
+npm run release:minor
+```
+- Runs tests and linting checks
+- Bumps minor version (e.g., 0.1.2 → 0.2.0)
+- Creates git commit and tag
+- Pushes to GitHub
+- Publishes to npm
+
+#### Major Release (Breaking Changes)
+```bash
+npm run release:major
+```
+- Runs tests and linting checks
+- Bumps major version (e.g., 0.1.2 → 1.0.0)
+- Creates git commit and tag
+- Pushes to GitHub
+- Publishes to npm
+
+### What Happens During Release
+
+Each release command automatically:
+
+1. **Pre-Release Checks**: Runs `npm run test` and `npm run lint` to ensure code quality
+2. **Version Bump**: Updates `package.json` version using `npm version`
+3. **Git Commit**: Creates a commit with the version bump
+4. **Git Tag**: Creates a version tag (e.g., `v0.1.3`)
+5. **Push to GitHub**: Pushes both the commit and tag to the remote repository
+6. **Build**: Runs `npm run clean && npm run build` (via `prepublishOnly` script)
+7. **Publish**: Publishes the package to npm registry
+
+### Pre-Release Checklist
+
+Before running a release command, ensure:
+
+- [ ] Changes are committed to git
+- [ ] You're on the main branch
+- [ ] You have push access to the GitHub repository
+- [ ] You're logged into npm (`npm whoami`)
+
+**Note**: Tests and linting are automatically run by the release commands, so you don't need to run them manually. If they fail, the release will be aborted.
+
+### Manual Release Process
+
+If you need to perform a manual release (not recommended), follow these steps:
+
+```bash
+# 1. Update version in package.json
+# 2. Commit the change
+git add package.json
+git commit -m "Bump version to X.Y.Z"
+
+# 3. Create and push tag
+git tag vX.Y.Z
+git push origin main
+git push origin vX.Y.Z
+
+# 4. Build and publish
+npm run build
+npm publish
+```
+
+## Package Information
+
+- **Package Name**: `@nmeierpolys/mcp-structured-memory`
+- **Registry**: https://registry.npmjs.org/
+- **Access**: Public
+- **Repository**: https://github.com/nmeierpolys/mcp-structured-memory
+
+## Project Structure
+
+```
+src/
+├── index.ts              # Main entry point
+├── storage/              # Storage management
+│   └── StorageManager.ts
+├── tools/                # MCP tools implementation
+│   ├── addToList.ts
+│   ├── createMemory.ts
+│   ├── getFullMemory.ts
+│   └── ...
+└── types/                # TypeScript type definitions
+    └── memory.ts
+```
+
+## Testing
+
+The project uses Vitest for testing. Test files are co-located with source files using the `.test.ts` extension.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Open test UI
+npm run test:ui
+```
+
+## Code Quality
+
+### ESLint Configuration
+The project uses ESLint with TypeScript support. Configuration is in `eslint.config.mjs`.
+
+```bash
+# Check for linting issues
+npm run lint
+
+# Fix auto-fixable issues
+npm run lint:fix
+```
+
+### TypeScript
+The project uses TypeScript with strict configuration. Build configuration is in `tsconfig.json`.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Run linting and fix any issues
+7. Submit a pull request
+
+## Troubleshooting
+
+### Common Issues
+
+**Build fails**: Ensure all dependencies are installed with `npm install`
+
+**Tests fail**: Check that you're using Node.js >= 20.0.0
+
+**Publish fails**: Verify you're logged into npm with `npm whoami`
+
+**Git push fails**: Ensure you have the latest changes with `git pull origin main`

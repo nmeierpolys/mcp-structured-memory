@@ -19,7 +19,11 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix"
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "pre-release": "npm run test && npm run lint",
+    "release:patch": "npm run pre-release && npm version patch && git push origin main && git push origin --tags && npm publish",
+    "release:minor": "npm run pre-release && npm version minor && git push origin main && git push origin --tags && npm publish",
+    "release:major": "npm run pre-release && npm version major && git push origin main && git push origin --tags && npm publish"
   },
   "keywords": [
     "mcp",
