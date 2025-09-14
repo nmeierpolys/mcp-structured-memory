@@ -112,27 +112,7 @@ Before running a release command, ensure:
 
 **Note**: Tests and linting are automatically run by the release commands, so you don't need to run them manually. If they fail, the release will be aborted.
 
-## GitHub Release Workflow
-
-The project includes a GitHub Actions workflow that handles the publishing process:
-
-### Release Workflow
-
-**Trigger**: When you push a git tag (via `npm run release:*` commands)
-
-**What it does**:
-- Runs tests, linting, and builds
-- Publishes the tagged version to npm
-- Creates GitHub releases
-
-**When it runs**: When you manually create releases using:
-```bash
-npm run release:patch   # Creates v0.1.3, triggers release workflow
-npm run release:minor    # Creates v0.2.0, triggers release workflow
-npm run release:major    # Creates v1.0.0, triggers release workflow
-```
-
-### Workflow Setup
+## Release Setup
 
 To enable releases, you need to:
 
