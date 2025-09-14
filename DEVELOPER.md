@@ -55,11 +55,9 @@ npm run pre-release
 
 ## Release Process
 
-The package includes both manual release scripts and automated GitHub workflows for releases. All release processes automatically run pre-release checks to ensure code quality.
+The package includes manual release scripts that handle version bumping, git tagging, and npm publishing. All release commands automatically run pre-release checks to ensure code quality.
 
-### Manual Release Commands
-
-These commands create tags that trigger the manual release workflow:
+### Release Commands
 
 #### Patch Release (Bug Fixes)
 ```bash
@@ -91,24 +89,34 @@ npm run release:major
 - Pushes to GitHub
 - Publishes to npm
 
+### What Happens During Release
 
-## Automated Release Workflows
+Each release command automatically:
 
-The project includes GitHub Actions workflows that automate the release process:
+1. **Pre-Release Checks**: Runs `npm run test` and `npm run lint` to ensure code quality
+2. **Version Bump**: Updates `package.json` version using `npm version`
+3. **Git Commit**: Creates a commit with the version bump
+4. **Git Tag**: Creates a version tag (e.g., `v0.1.3`)
+5. **Push to GitHub**: Pushes both the commit and tag to the remote repository
+6. **Build**: Runs `npm run clean && npm run build` (via `prepublishOnly` script)
+7. **Publish**: Publishes the package to npm registry
 
-### Auto-Release Workflow
+### Pre-Release Checklist
 
-**Trigger**: Every push to `main` branch (ignores documentation-only changes)
+Before running a release command, ensure:
 
-**What it does**:
-- Runs tests, linting, and type checking
-- Automatically creates patch releases (e.g., 0.1.2 → 0.1.3)
-- Publishes to npm
-- Creates GitHub releases with changelog links
+- [ ] Changes are committed to git
+- [ ] You're on the main branch
+- [ ] You have push access to the GitHub repository
+- [ ] You're logged into npm (`npm whoami`)
 
-**When it runs**: Automatically on every code change pushed to main
+**Note**: Tests and linting are automatically run by the release commands, so you don't need to run them manually. If they fail, the release will be aborted.
 
-### Manual Release Workflow
+## GitHub Release Workflow
+
+The project includes a GitHub Actions workflow that handles the publishing process:
+
+### Release Workflow
 
 **Trigger**: When you push a git tag (via `npm run release:*` commands)
 
@@ -119,14 +127,14 @@ The project includes GitHub Actions workflows that automate the release process:
 
 **When it runs**: When you manually create releases using:
 ```bash
-npm run release:patch   # Creates v0.1.3, triggers manual workflow
-npm run release:minor    # Creates v0.2.0, triggers manual workflow
-npm run release:major    # Creates v1.0.0, triggers manual workflow
+npm run release:patch   # Creates v0.1.3, triggers release workflow
+npm run release:minor    # Creates v0.2.0, triggers release workflow
+npm run release:major    # Creates v1.0.0, triggers release workflow
 ```
 
 ### Workflow Setup
 
-To enable automated releases, you need to:
+To enable releases, you need to:
 
 1. **Add NPM Token to GitHub Secrets**:
    - Go to repo → Settings → Secrets and variables → Actions
