@@ -55,9 +55,11 @@ npm run pre-release
 
 ## Release Process
 
-The package includes automated release scripts that handle version bumping, git tagging, and npm publishing. All release commands automatically run pre-release checks to ensure code quality.
+The package includes both manual release scripts and automated GitHub workflows for releases. All release processes automatically run pre-release checks to ensure code quality.
 
-### Release Commands
+### Manual Release Commands
+
+These commands create tags that trigger the manual release workflow:
 
 #### Patch Release (Bug Fixes)
 ```bash
@@ -89,28 +91,52 @@ npm run release:major
 - Pushes to GitHub
 - Publishes to npm
 
-### What Happens During Release
 
-Each release command automatically:
+## Automated Release Workflows
 
-1. **Pre-Release Checks**: Runs `npm run test` and `npm run lint` to ensure code quality
-2. **Version Bump**: Updates `package.json` version using `npm version`
-3. **Git Commit**: Creates a commit with the version bump
-4. **Git Tag**: Creates a version tag (e.g., `v0.1.3`)
-5. **Push to GitHub**: Pushes both the commit and tag to the remote repository
-6. **Build**: Runs `npm run clean && npm run build` (via `prepublishOnly` script)
-7. **Publish**: Publishes the package to npm registry
+The project includes GitHub Actions workflows that automate the release process:
 
-### Pre-Release Checklist
+### Auto-Release Workflow
 
-Before running a release command, ensure:
+**Trigger**: Every push to `main` branch (ignores documentation-only changes)
 
-- [ ] Changes are committed to git
-- [ ] You're on the main branch
-- [ ] You have push access to the GitHub repository
-- [ ] You're logged into npm (`npm whoami`)
+**What it does**:
+- Runs tests, linting, and type checking
+- Automatically creates patch releases (e.g., 0.1.2 → 0.1.3)
+- Publishes to npm
+- Creates GitHub releases with changelog links
 
-**Note**: Tests and linting are automatically run by the release commands, so you don't need to run them manually. If they fail, the release will be aborted.
+**When it runs**: Automatically on every code change pushed to main
+
+### Manual Release Workflow
+
+**Trigger**: When you push a git tag (via `npm run release:*` commands)
+
+**What it does**:
+- Runs tests, linting, and builds
+- Publishes the tagged version to npm
+- Creates GitHub releases
+
+**When it runs**: When you manually create releases using:
+```bash
+npm run release:patch   # Creates v0.1.3, triggers manual workflow
+npm run release:minor    # Creates v0.2.0, triggers manual workflow
+npm run release:major    # Creates v1.0.0, triggers manual workflow
+```
+
+### Workflow Setup
+
+To enable automated releases, you need to:
+
+1. **Add NPM Token to GitHub Secrets**:
+   - Go to repo → Settings → Secrets and variables → Actions
+   - Add repository secret named `NPM_TOKEN`
+   - Value: Your npm automation token
+
+2. **Create NPM Token**:
+   ```bash
+   npm token create --read-only=false
+   ```
 
 ### Manual Release Process
 
@@ -132,81 +158,3 @@ npm run build
 npm publish
 ```
 
-## Package Information
-
-- **Package Name**: `@nmeierpolys/mcp-structured-memory`
-- **Registry**: https://registry.npmjs.org/
-- **Access**: Public
-- **Repository**: https://github.com/nmeierpolys/mcp-structured-memory
-
-## Project Structure
-
-```
-src/
-├── index.ts              # Main entry point
-├── storage/              # Storage management
-│   └── StorageManager.ts
-├── tools/                # MCP tools implementation
-│   ├── addToList.ts
-│   ├── createMemory.ts
-│   ├── getFullMemory.ts
-│   └── ...
-└── types/                # TypeScript type definitions
-    └── memory.ts
-```
-
-## Testing
-
-The project uses Vitest for testing. Test files are co-located with source files using the `.test.ts` extension.
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage report
-npm run test:coverage
-
-# Open test UI
-npm run test:ui
-```
-
-## Code Quality
-
-### ESLint Configuration
-The project uses ESLint with TypeScript support. Configuration is in `eslint.config.mjs`.
-
-```bash
-# Check for linting issues
-npm run lint
-
-# Fix auto-fixable issues
-npm run lint:fix
-```
-
-### TypeScript
-The project uses TypeScript with strict configuration. Build configuration is in `tsconfig.json`.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Run linting and fix any issues
-7. Submit a pull request
-
-## Troubleshooting
-
-### Common Issues
-
-**Build fails**: Ensure all dependencies are installed with `npm install`
-
-**Tests fail**: Check that you're using Node.js >= 20.0.0
-
-**Publish fails**: Verify you're logged into npm with `npm whoami`
-
-**Git push fails**: Ensure you have the latest changes with `git pull origin main`
