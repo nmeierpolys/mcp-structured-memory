@@ -12,6 +12,9 @@ on:
 jobs:
   auto-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     
     steps:
     - name: Checkout code
@@ -70,16 +73,13 @@ jobs:
           git config --local user.name "GitHub Action"
           git add package.json
           git commit -m "Bump version to $NEW_VERSION [skip ci]"
+          # Push the commit first
+          git push origin main
         fi
         
         # Create and push tag
         git tag "v$NEW_VERSION"
         git push origin "v$NEW_VERSION"
-        
-        # Push the commit if there was a version bump
-        if [ "${{ steps.version-check.outputs.current-version }}" != "$NEW_VERSION" ]; then
-          git push origin main
-        fi
 
     - name: Publish to npm
       if: steps.version-check.outputs.should-release == 'true'
