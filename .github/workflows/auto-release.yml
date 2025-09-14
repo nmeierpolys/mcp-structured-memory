@@ -1,0 +1,104 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'DEVELOPER.md'
+      - '.gitignore'
+      - 'LICENSE'
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linting
+      run: npm run lint
+
+    - name: Run type checking
+      run: npm run build
+
+    - name: Run tests
+      run: npm test
+
+    - name: Check if version bump is needed
+      id: version-check
+      run: |
+        # Get current version from package.json
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        echo "current-version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        
+        # Check if there's already a tag for this version
+        if git rev-parse "v$CURRENT_VERSION" >/dev/null 2>&1; then
+          echo "Version $CURRENT_VERSION already has a tag, bumping patch version"
+          npm version patch --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "should-release=true" >> $GITHUB_OUTPUT
+        else
+          echo "Version $CURRENT_VERSION doesn't have a tag yet"
+          echo "new-version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "should-release=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create Release
+      if: steps.version-check.outputs.should-release == 'true'
+      run: |
+        NEW_VERSION="${{ steps.version-check.outputs.new-version }}"
+        
+        # Commit the version bump if it was changed
+        if [ "${{ steps.version-check.outputs.current-version }}" != "$NEW_VERSION" ]; then
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json
+          git commit -m "Bump version to $NEW_VERSION [skip ci]"
+        fi
+        
+        # Create and push tag
+        git tag "v$NEW_VERSION"
+        git push origin "v$NEW_VERSION"
+        
+        # Push the commit if there was a version bump
+        if [ "${{ steps.version-check.outputs.current-version }}" != "$NEW_VERSION" ]; then
+          git push origin main
+        fi
+
+    - name: Publish to npm
+      if: steps.version-check.outputs.should-release == 'true'
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Create GitHub Release
+      if: steps.version-check.outputs.should-release == 'true'
+      uses: ncipollo/release-action@v1
+      with:
+        tag: v${{ steps.version-check.outputs.new-version }}
+        name: Release v${{ steps.version-check.outputs.new-version }}
+        body: |
+          ## Changes
+          This is an automated patch release.
+          
+          ### Version: ${{ steps.version-check.outputs.new-version }}
+          
+          See the [changelog](https://github.com/nmeierpolys/mcp-structured-memory/compare/v${{ steps.version-check.outputs.current-version }}...v${{ steps.version-check.outputs.new-version }}) for details.
+        draft: false
+        prerelease: false
