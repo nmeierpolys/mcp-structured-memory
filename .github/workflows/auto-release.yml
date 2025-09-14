@@ -1,13 +1,14 @@
 name: Auto Release
 
-on:
-  push:
-    branches: [ main ]
-    paths-ignore:
-      - 'README.md'
-      - 'DEVELOPER.md'
-      - '.gitignore'
-      - 'LICENSE'
+# Disabled due to protected branch restrictions
+# on:
+#   push:
+#     branches: [ main ]
+#     paths-ignore:
+#       - 'README.md'
+#       - 'DEVELOPER.md'
+#       - '.gitignore'
+#       - 'LICENSE'
 
 jobs:
   auto-release:
@@ -67,19 +68,12 @@ jobs:
       run: |
         NEW_VERSION="${{ steps.version-check.outputs.new-version }}"
         
-        # Commit the version bump if it was changed
-        if [ "${{ steps.version-check.outputs.current-version }}" != "$NEW_VERSION" ]; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add package.json
-          git commit -m "Bump version to $NEW_VERSION [skip ci]"
-          # Push the commit first
-          git push origin main
-        fi
-        
-        # Create and push tag
+        # Create and push tag (this should work even with protected branches)
         git tag "v$NEW_VERSION"
         git push origin "v$NEW_VERSION"
+        
+        # Note: Version bump commits are skipped for protected branches
+        # The tag will still trigger the manual release workflow
 
     - name: Publish to npm
       if: steps.version-check.outputs.should-release == 'true'
