@@ -1,6 +1,6 @@
 {
   "name": "@nmeierpolys/mcp-structured-memory",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "A Model Context Protocol server that automatically maintains structured, domain-specific memory documents for focused projects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
