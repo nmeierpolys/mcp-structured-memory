@@ -5,13 +5,12 @@ import { Memory, MemorySection } from '../types/memory.js'
 
 // Mock the StorageManager
 vi.mock('../storage/StorageManager.js', () => {
-  return {
-    StorageManager: vi.fn().mockImplementation(() => ({
-      readMemory: vi.fn(),
-      findSection: vi.fn(),
-      parseSections: vi.fn()
-    }))
+  class StorageManager {
+    readMemory = vi.fn()
+    findSection = vi.fn()
+    parseSections = vi.fn()
   }
+  return { StorageManager }
 })
 
 describe('getSection Tool', () => {

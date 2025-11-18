@@ -5,11 +5,10 @@ import { MemorySummary } from '../types/memory.js'
 
 // Mock the StorageManager
 vi.mock('../storage/StorageManager.js', () => {
-  return {
-    StorageManager: vi.fn().mockImplementation(() => ({
-      listMemories: vi.fn()
-    }))
+  class StorageManager {
+    listMemories = vi.fn()
   }
+  return { StorageManager }
 })
 
 describe('listMemories Tool', () => {
