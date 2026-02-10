@@ -42,19 +42,20 @@
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.2.2",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "@vitest/coverage-v8": "^4.0.10",
     "@vitest/ui": "^4.0.10",
-    "eslint": "^9.32.0",
+    "eslint": "^10.0.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^7.0.6",
     "vitest": "^4.0.10"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": "^20.19.0 || ^22.13.0 || >=24"
   },
   "repository": {
     "type": "git",
