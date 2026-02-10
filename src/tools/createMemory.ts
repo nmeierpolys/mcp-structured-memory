@@ -31,15 +31,10 @@ export async function createMemoryTool(
 
   // Handle content - either use provided content or generate basic structure
   const title = params.name;
-  let content = "";
-
-  if (params.content && params.content.trim()) {
-    // Use provided content directly (full markdown content)
-    content = params.content;
-  } else {
-    // Generate basic structure with title and placeholder
-    content = `# ${title}\n\n## Notes\n\n[Add your notes and organize into sections as needed]`;
-  }
+  const content =
+    params.content && params.content.trim()
+      ? params.content
+      : `# ${title}\n\n## Notes\n\n[Add your notes and organize into sections as needed]`;
 
   // Create memory object
   const memory: Memory = {
