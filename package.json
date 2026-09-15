@@ -46,13 +46,13 @@
     "@types/node": "^26.0.0",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
-    "@vitest/coverage-v8": "^4.0.10",
-    "@vitest/ui": "^4.0.10",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/ui": "^5.0.0",
     "eslint": "^10.0.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.39.1",
     "vite": "^8.0.0",
-    "vitest": "^4.0.10"
+    "vitest": "^5.0.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24"
