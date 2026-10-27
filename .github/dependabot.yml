@@ -12,7 +12,7 @@ updates:
     assignees:
       - "nmeierpolys"
     commit-message:
-      prefix: "deps"
+      prefix: "fix"
       include: "scope"
     groups:
       dev-dependencies:
