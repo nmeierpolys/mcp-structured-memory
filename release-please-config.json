@@ -5,7 +5,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "mcp-structured-memory",
+      "package-name": "@nmeierpolys/mcp-structured-memory",
       "changelog-path": "CHANGELOG.md"
     }
   }
