@@ -55,94 +55,28 @@ npm run pre-release
 
 ## Release Process
 
-The package includes manual release scripts that handle version bumping, git tagging, and npm publishing. All release commands automatically run pre-release checks to ensure code quality.
+Versions, tags, and GitHub releases are handled by [release-please](https://github.com/googleapis/release-please-action). npm publishing is manual.
 
-### Release Commands
+### How a release happens
 
-#### Patch Release (Bug Fixes)
-```bash
-npm run release:patch
-```
-- Runs tests and linting checks
-- Bumps patch version (e.g., 0.1.2 → 0.1.3)
-- Creates git commit and tag
-- Pushes to GitHub
-- Publishes to npm
-
-#### Minor Release (New Features)
-```bash
-npm run release:minor
-```
-- Runs tests and linting checks
-- Bumps minor version (e.g., 0.1.2 → 0.2.0)
-- Creates git commit and tag
-- Pushes to GitHub
-- Publishes to npm
-
-#### Major Release (Breaking Changes)
-```bash
-npm run release:major
-```
-- Runs tests and linting checks
-- Bumps major version (e.g., 0.1.2 → 1.0.0)
-- Creates git commit and tag
-- Pushes to GitHub
-- Publishes to npm
-
-### What Happens During Release
-
-Each release command automatically:
-
-1. **Pre-Release Checks**: Runs `npm run test` and `npm run lint` to ensure code quality
-2. **Version Bump**: Updates `package.json` version using `npm version`
-3. **Git Commit**: Creates a commit with the version bump
-4. **Git Tag**: Creates a version tag (e.g., `v0.1.3`)
-5. **Push to GitHub**: Pushes both the commit and tag to the remote repository
-6. **Build**: Runs `npm run clean && npm run build` (via `prepublishOnly` script)
-7. **Publish**: Publishes the package to npm registry
-
-### Pre-Release Checklist
-
-Before running a release command, ensure:
-
-- [ ] Changes are committed to git
-- [ ] You're on the main branch
-- [ ] You have push access to the GitHub repository
-- [ ] You're logged into npm (`npm whoami`)
-
-**Note**: Tests and linting are automatically run by the release commands, so you don't need to run them manually. If they fail, the release will be aborted.
-
-## Release Setup
-
-To enable releases, you need to:
-
-1. **Add NPM Token to GitHub Secrets**:
-   - Go to repo → Settings → Secrets and variables → Actions
-   - Add repository secret named `NPM_TOKEN`
-   - Value: Your npm automation token
-
-2. **Create NPM Token**:
-   ```bash
-   npm token create --read-only=false
-   ```
-
-### Manual Release Process
-
-If you need to perform a manual release (not recommended), follow these steps:
+1. Merge PRs to `main` with conventional commit titles. Squash merges use the PR title.
+   - `feat:` gives a minor bump, `fix:` a patch, and `feat!:` or a `BREAKING CHANGE:` footer a major bump.
+2. Every push to `main` runs the `release-please` job in `.github/workflows/ci.yml`. It opens or updates a **Release PR** titled `chore(main): release X.Y.Z`. That PR bumps `package.json` and `package-lock.json` and updates `CHANGELOG.md`.
+3. When you want to ship, merge the Release PR. The job then creates the `vX.Y.Z` tag and the GitHub release.
+4. Publish to npm manually from the tagged commit:
 
 ```bash
-# 1. Update version in package.json
-# 2. Commit the change
-git add package.json
-git commit -m "Bump version to X.Y.Z"
-
-# 3. Create and push tag
-git tag vX.Y.Z
-git push origin main
-git push origin vX.Y.Z
-
-# 4. Build and publish
-npm run build
+git pull origin main
+npm run pre-release
 npm publish
 ```
 
+`prepublishOnly` rebuilds `dist/` before publishing.
+
+Don't edit the version in `package.json` by hand. The Release PR owns it.
+
+### One-time setup
+
+- **Repo setting:** Settings → Actions → General → enable "Allow GitHub Actions to create and approve pull requests".
+- **Secret:** add `RELEASE_PLEASE_TOKEN`, a fine-grained PAT for this repo with Contents: read/write and Pull requests: read/write. It's required because PRs opened with the default `GITHUB_TOKEN` don't trigger CI, so the Release PR's required checks would never report.
+- **npm:** `npm whoami` must succeed locally. Publishing uses your local npm login, not a CI token.
