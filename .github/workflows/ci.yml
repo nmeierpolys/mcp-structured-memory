@@ -99,3 +99,64 @@ jobs:
         else
           echo "✅ Code formatting is correct"
         fi
+
+  # Runs only after every required check passes on a push to main (i.e. a merged PR).
+  # Tags package.json's version and creates a GitHub release for it. npm publish stays manual.
+  release:
+    needs: [test, build, lint-fix-check]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    concurrency:
+      group: release
+      cancel-in-progress: false
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Determine release action
+      id: plan
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+      run: |
+        VERSION=$(node -p "require('./package.json').version")
+        TAG="v$VERSION"
+        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+        if gh release view "$TAG" >/dev/null 2>&1; then
+          echo "action=none" >> "$GITHUB_OUTPUT"
+          echo "Release $TAG already exists; nothing to do."
+        elif git fetch --quiet --no-tags origin "refs/tags/$TAG:refs/tags/$TAG" 2>/dev/null; then
+          # Tag exists without a release, e.g. created by `npm run release:*` on this commit.
+          # Release it only when it points here, so historical tags are not backfilled.
+          if [ "$(git rev-parse "$TAG^{commit}")" = "$GITHUB_SHA" ]; then
+            echo "action=release" >> "$GITHUB_OUTPUT"
+          else
+            echo "action=none" >> "$GITHUB_OUTPUT"
+            echo "Tag $TAG points at another commit; not releasing."
+          fi
+        else
+          echo "action=tag-and-release" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Create and push tag
+      if: steps.plan.outputs.action == 'tag-and-release'
+      env:
+        TAG: ${{ steps.plan.outputs.tag }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git tag -a "$TAG" -m "Release $TAG" "$GITHUB_SHA"
+        git push origin "refs/tags/$TAG"
+
+    - name: Create GitHub release
+      if: steps.plan.outputs.action != 'none'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        TAG: ${{ steps.plan.outputs.tag }}
+      run: gh release create "$TAG" --verify-tag --title "$TAG" --generate-notes

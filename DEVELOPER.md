@@ -89,6 +89,16 @@ npm run release:major
 - Pushes to GitHub
 - Publishes to npm
 
+### Automatic Tag and GitHub Release
+
+When a PR merges to `main` and all CI checks pass, the `release` job in `.github/workflows/ci.yml` runs:
+
+- If `package.json`'s version has no `vX.Y.Z` tag yet, it tags the merge commit and creates a GitHub release with generated notes.
+- If the tag already exists and points at the merge commit (e.g. from `npm run release:*`) but has no release, it creates the release.
+- Otherwise it does nothing. Merges that don't bump the version don't release.
+
+Npm publishing is still manual via the `release:*` scripts.
+
 ### What Happens During Release
 
 Each release command automatically:
