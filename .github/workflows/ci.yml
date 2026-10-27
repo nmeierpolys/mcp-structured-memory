@@ -134,7 +134,9 @@ jobs:
         manifest-file: .release-please-manifest.json
 
   # Publishes to npm after a Release PR merges (release_created) or when run manually with a tag.
-  # Uses the NPM_TOKEN secret. Provenance requires id-token: write and a public repo.
+  # Authenticates with npm trusted publishing (OIDC), so no npm token is stored in the repo.
+  # Requires a trusted publisher configured on npmjs.com for this workflow (ci.yml) and npm >= 11.5.1,
+  # which Node 22 does not ship with. Provenance requires id-token: write and a public repo.
   publish-npm:
     needs: release-please
     if: ${{ always() && (github.event_name == 'workflow_dispatch' || needs.release-please.outputs.release_created == 'true') }}
@@ -169,12 +171,14 @@ jobs:
       with:
         node-version: '22.x'
         cache: 'npm'
-        registry-url: 'https://registry.npmjs.org'
+
+    - name: Upgrade npm for trusted publishing
+      run: |
+        npm install -g npm@^11.5.1
+        npm --version
 
     - name: Install dependencies
       run: npm ci
 
     - name: Publish to npm
       run: npm publish --provenance --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
