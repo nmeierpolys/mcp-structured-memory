@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     
     strategy:
       matrix:
@@ -16,10 +16,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -41,22 +41,22 @@ jobs:
       if: matrix.node-version == '22.x'
     
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v7
       if: matrix.node-version == '22.x'
       with:
         files: ./coverage/lcov.info
         fail_ci_if_error: false
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: test
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
         node-version: '22.x'
         cache: 'npm'
@@ -74,14 +74,14 @@ jobs:
         echo "Build artifacts verified successfully"
 
   lint-fix-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
         node-version: '22.x'
         cache: 'npm'
@@ -106,7 +106,7 @@ jobs:
   # with GITHUB_TOKEN don't trigger CI and the Release PR's required checks would never report.
   release-please:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       pull-requests: write
@@ -117,7 +117,7 @@ jobs:
 
     steps:
     - name: Run release-please
-      uses: googleapis/release-please-action@v4
+      uses: googleapis/release-please-action@v5
       with:
         token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
         config-file: release-please-config.json
