@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.5...v0.2.6) (2026-10-27)
+
+
+### Bug Fixes
+
+* **deps:** bump chokidar from 5.0.0 to 6.0.0 ([#230](https://github.com/nmeierpolys/mcp-structured-memory/issues/230)) ([16139d3](https://github.com/nmeierpolys/mcp-structured-memory/commit/16139d3aa33d0196f1c3c414272f401faea44db5))
+
 ## [0.2.5](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.4...v0.2.5) (2026-10-27)
 
 
