@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.7](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.6...v0.2.7) (2026-10-31)
+
+
+### Bug Fixes
+
+* **deps-dev:** bump vite ([#236](https://github.com/nmeierpolys/mcp-structured-memory/issues/236)) ([34bab30](https://github.com/nmeierpolys/mcp-structured-memory/commit/34bab301b2bcae5715f4c46a325150b6442f4ad1))
+* **deps:** bump @modelcontextprotocol/sdk ([#237](https://github.com/nmeierpolys/mcp-structured-memory/issues/237)) ([261ae16](https://github.com/nmeierpolys/mcp-structured-memory/commit/261ae16d67373595410bc2e68ea0a7f702e0f554))
+
 ## [0.2.6](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.5...v0.2.6) (2026-10-27)
 
 
