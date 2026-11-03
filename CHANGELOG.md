@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.8](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.7...v0.2.8) (2026-11-03)
+
+
+### Bug Fixes
+
+* **deps:** bump @hono/node-server from 2.1.1 to 2.1.5 ([#240](https://github.com/nmeierpolys/mcp-structured-memory/issues/240)) ([f578b5b](https://github.com/nmeierpolys/mcp-structured-memory/commit/f578b5b3cfd2788aed1249122f663c9bc54545f8))
+
 ## [0.2.7](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.6...v0.2.7) (2026-10-31)
 
 
