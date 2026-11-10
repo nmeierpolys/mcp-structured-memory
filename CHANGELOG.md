@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.9](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.8...v0.2.9) (2026-11-10)
+
+
+### Bug Fixes
+
+* **deps-dev:** bump the dev-dependencies group across 1 directory with 5 updates ([#245](https://github.com/nmeierpolys/mcp-structured-memory/issues/245)) ([0992b80](https://github.com/nmeierpolys/mcp-structured-memory/commit/0992b804d4dd8ae387e609a9c2c40d7eb01ec3ef))
+* **deps-dev:** bump typescript-eslint from 8.72.0 to 8.72.1 ([#243](https://github.com/nmeierpolys/mcp-structured-memory/issues/243)) ([7046961](https://github.com/nmeierpolys/mcp-structured-memory/commit/704696180c57e8605999c0629030b0142c91b53e))
+
 ## [0.2.8](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.7...v0.2.8) (2026-11-03)
 
 
