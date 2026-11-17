@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.10](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.9...v0.2.10) (2026-11-17)
+
+
+### Bug Fixes
+
+* **deps-dev:** bump vite ([#248](https://github.com/nmeierpolys/mcp-structured-memory/issues/248)) ([e221762](https://github.com/nmeierpolys/mcp-structured-memory/commit/e221762995ae3ce3ab3bde36e1dc37f45d10c397))
+* **deps:** bump @hono/node-server from 2.1.5 to 2.1.8 ([#246](https://github.com/nmeierpolys/mcp-structured-memory/issues/246)) ([f5a93fd](https://github.com/nmeierpolys/mcp-structured-memory/commit/f5a93fdec3b87bc001c03e54e1ae88023a6068a1))
+* **deps:** bump @hono/node-server from 2.1.8 to 2.1.9 ([#251](https://github.com/nmeierpolys/mcp-structured-memory/issues/251)) ([bf27e08](https://github.com/nmeierpolys/mcp-structured-memory/commit/bf27e08689e428cd84d5ab4efdae50f1db7b78de))
+* **deps:** bump hono from 4.13.13 to 4.13.18 ([#247](https://github.com/nmeierpolys/mcp-structured-memory/issues/247)) ([fc4bd63](https://github.com/nmeierpolys/mcp-structured-memory/commit/fc4bd639c2e7faaf0eb9a2de7f6afa6fa94d5369))
+* **deps:** bump hono from 4.13.18 to 4.13.19 ([#250](https://github.com/nmeierpolys/mcp-structured-memory/issues/250)) ([6074986](https://github.com/nmeierpolys/mcp-structured-memory/commit/607498614c8cacbc99394b783cdd2f7f2d633285))
+
 ## [0.2.9](https://github.com/nmeierpolys/mcp-structured-memory/compare/v0.2.8...v0.2.9) (2026-11-10)
 
 
